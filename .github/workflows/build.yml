@@ -41,7 +41,7 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           cache: true
-          cache-dependency-path: ${{ env.plugin_name }}/{{ env.plugin_name }}/packages.lock.json
+          cache-dependency-path: ${{ env.plugin_name }}/${{ env.plugin_name }}/packages.lock.json
           dotnet-version: 9.0.x
 
       - name: Determine Dalamud Branch
@@ -113,5 +113,5 @@ jobs:
         uses: peter-evans/repository-dispatch@v3
         with:
           token: ${{ secrets.REPO_PAT }}
-          repository: ${{ github.repository_owner }}/MyDalamudPlugins
+          repository: ${{ github.repository_owner }}/Repo
           event-type: new-release
