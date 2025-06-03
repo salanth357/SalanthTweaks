@@ -2,6 +2,7 @@ name: Build Plugin
 
 env:
   plugin_name: SalanthTweaks
+  build_path: SalanthTweaks/SalanthTweaks/bin/Release
 
 on:
   push:
@@ -78,13 +79,13 @@ jobs:
 
       - name: Rename manifest
         if: github.event_name != 'pull_request'
-        run: mv SalanthTweaks/SalanthTweaks/bin/SalanthTweaks.json SalanthTweaks/SalanthTweaks/bin/manifest.json
+        run: mv ${{ env.build_path }}/SalanthTweaks.json ${{ env.build_path }}/manifest.json
 
       - name: Upload Build Artifact
         if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v4
         with:
-          path: SalanthTweaks/SalanthTweaks/bin/*
+          path: ${{ env.build_path }}/*
 
   release:
     name: Release
