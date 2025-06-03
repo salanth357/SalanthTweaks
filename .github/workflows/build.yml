@@ -78,13 +78,13 @@ jobs:
 
       - name: Rename manifest
         if: github.event_name != 'pull_request'
-        run: mv bin/${{ env.plugin_name }}/${{ env.plugin_name }}.json bin/${{ env.plugin_name }}/manifest.json
+        run: mv SalanthTweaks/SalanthTweaks/bin/SalanthTweaks.json SalanthTweaks/SalanthTweaks/bin/manifest.json
 
       - name: Upload Build Artifact
         if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@v4
         with:
-          path: bin/${{ env.plugin_name }}/*
+          path: SalanthTweaks/SalanthTweaks/bin/*
 
   release:
     name: Release
