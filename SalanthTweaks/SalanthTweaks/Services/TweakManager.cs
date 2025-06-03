@@ -125,6 +125,7 @@ public sealed class TweakManager(IPluginLog PluginLog, PluginConfig PluginConfig
                  if (item.Item2 is null || !item.Item2.Disable) return;
                  if (item.info.GetValue(tweak) is not IDalamudHook hook) return;
                  hook.GetType().GetMethod("Disable")?.Invoke(hook, null);
+                 hook.Dispose();
              });
 
         tweak.GetType().GetProperties(BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic).Select(info => (info, info.GetCustomAttribute<Attributes.AutoHookAttribute>()))
@@ -133,6 +134,7 @@ public sealed class TweakManager(IPluginLog PluginLog, PluginConfig PluginConfig
                  if (item.Item2 is null || !item.Item2.Disable) return;
                  if (item.info.GetValue(tweak) is not IDalamudHook hook) return;
                  hook.GetType().GetMethod("Disable")?.Invoke(hook, null);
+                 hook.Dispose();
              });
     }
 

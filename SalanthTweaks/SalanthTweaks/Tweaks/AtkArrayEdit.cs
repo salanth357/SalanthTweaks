@@ -1,7 +1,6 @@
 ﻿using System.Globalization;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.System.String;
-using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using SalanthTweaks.Attributes;
 using SalanthTweaks.Enums;
@@ -13,8 +12,7 @@ namespace SalanthTweaks.Tweaks;
 [RegisterSingleton<ITweak>(Duplicate = DuplicateStrategy.Append)]
 public class AtkArrayEdit : ITweak
 {
-    private IChatGui? ChatGui;
-    private CommandService? CommandService;
+    private IChatGui? chatGui;
     void IDisposable.Dispose()
     {
         GC.SuppressFinalize(this);
@@ -24,8 +22,7 @@ public class AtkArrayEdit : ITweak
     public TweakStatus Status { get; set; }
     public void OnInitialize()
     {
-        ChatGui = Service.Get<IChatGui>();
-        CommandService = Service.Get<CommandService>();
+        chatGui = Service.Get<IChatGui>();
     }
 
     public void OnEnable()
@@ -43,7 +40,7 @@ public class AtkArrayEdit : ITweak
         var parts = args.Split(' ', 4);
         if (parts.Length < 3)
         {
-            ChatGui?.PrintError("Invalid arguments");
+            chatGui?.PrintError("Invalid arguments");
             return;
         }
 
@@ -51,19 +48,19 @@ public class AtkArrayEdit : ITweak
         var kind = parts[0];
         if (kind is not ("n" or "s"))
         {
-            ChatGui?.PrintError("Invalid AtkArray type");
+            chatGui?.PrintError("Invalid AtkArray type");
             return;
         }
 
         if (!int.TryParse(parts[1], NumberStyles.None, CultureInfo.InvariantCulture, out var arrayNum))
         {
-            ChatGui?.PrintError("Invalid array number");
+            chatGui?.PrintError("Invalid array number");
             return;
         }
 
         if (!int.TryParse(parts[2], NumberStyles.None, CultureInfo.InvariantCulture, out var arrayIndex))
         {
-            ChatGui?.PrintError("Invalid array index");
+            chatGui?.PrintError("Invalid array index");
             return;
         }
 
@@ -73,14 +70,14 @@ public class AtkArrayEdit : ITweak
         {
             if (arrayNum < 0 || arrayNum >= arrayHolder->NumberArrayCount)
             {
-                ChatGui?.PrintError("Array number is out of range");
+                chatGui?.PrintError("Array number is out of range");
                 return;
             }
 
             var array = arrayHolder->GetNumberArrayData(arrayNum);
             if (arrayIndex < 0 || arrayIndex >= array->Size)
             {
-                ChatGui?.PrintError("Array index is out of range");
+                chatGui?.PrintError("Array index is out of range");
             }
 
             message = $"{kind}{arrayNum}.{arrayIndex}: {array->IntArray[arrayIndex]}";
@@ -99,14 +96,14 @@ public class AtkArrayEdit : ITweak
         {
             if (arrayNum < 0 || arrayNum >= arrayHolder->StringArrayCount)
             {
-                ChatGui?.PrintError("Array number is out of range");
+                chatGui?.PrintError("Array number is out of range");
                 return;
             }
 
             var array = arrayHolder->GetStringArrayData(arrayNum);
             if (arrayIndex < 0 || arrayIndex >= array->Size)
             {
-                ChatGui?.PrintError("Array index is out of range");
+                chatGui?.PrintError("Array index is out of range");
             }
             var str = array->StringArray[arrayIndex];
             message = $"{kind}{arrayNum}.{arrayIndex}: {(str == null ? "\u2400" : Utf8String.FromSequence(str)->ToString())}";
@@ -123,6 +120,6 @@ public class AtkArrayEdit : ITweak
                 }
             }
         }
-        ChatGui?.Print(message, "AtkEdit");
+        chatGui?.Print(message, "AtkEdit");
     }
 }

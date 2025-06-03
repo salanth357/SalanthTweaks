@@ -32,7 +32,7 @@ public unsafe class UiHelper(ILogger<UiHelper> Log) : IDisposable
         return null;
     }
 
-public record PartInfo(ushort U, ushort V, ushort Width, ushort Height);
+    public record PartInfo(ushort U, ushort V, ushort Width, ushort Height);
 
     public AtkImageNode* MakeImageNode(uint id, PartInfo partInfo)
     {
@@ -223,6 +223,5 @@ public record PartInfo(ushort U, ushort V, ushort Width, ushort Height);
 
     public void Dispose()
     {
-        // TODO release managed resources here
     }
 }

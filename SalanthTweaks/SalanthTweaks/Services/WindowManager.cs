@@ -8,23 +8,23 @@ namespace SalanthTweaks.Services;
 public class WindowManager : IDisposable
 {
 
-    private readonly WindowSystem WindowSystem;
-    private readonly IDalamudPluginInterface PluginInterface;
+    private readonly WindowSystem windowSystem;
+    private readonly IDalamudPluginInterface pluginInterface;
 
     public WindowManager(IDalamudPluginInterface pluginInterface)
     {
-        PluginInterface = pluginInterface;
-        WindowSystem = new WindowSystem(pluginInterface.InternalName);
-        PluginInterface.UiBuilder.Draw += WindowSystem.Draw;
+        this.pluginInterface = pluginInterface;
+        windowSystem = new WindowSystem(pluginInterface.InternalName);
+        this.pluginInterface.UiBuilder.Draw += windowSystem.Draw;
     }
 
-    public void AddWindow(Window window) => WindowSystem.AddWindow(window);
+    public void AddWindow(Window window) => windowSystem.AddWindow(window);
 
 
     public void Dispose()
     {
-        PluginInterface.UiBuilder.Draw -= WindowSystem.Draw;
-        WindowSystem.Windows.OfType<IDisposable>().ForEach(window => window.Dispose());
-        WindowSystem.RemoveAllWindows();
+        pluginInterface.UiBuilder.Draw -= windowSystem.Draw;
+        windowSystem.Windows.OfType<IDisposable>().ForEach(window => window.Dispose());
+        windowSystem.RemoveAllWindows();
     }
 }
