@@ -3,6 +3,9 @@
     <Platform Name="Any CPU" />
     <Platform Name="x64" />
   </Configurations>
+  <Folder Name="/CI/">
+    <File Path=".github\workflows\build.yml" />
+  </Folder>
   <Folder Name="/ClientStructs/">
     <Project Path="FFXIVClientStructs\FFXIVClientStructs.Generators\FFXIVClientStructs.Generators.csproj">
       <Configuration Solution="Debug|x64" Project="Debug|Any CPU" />
@@ -26,7 +29,7 @@
     <Configuration Solution="Debug|x64" Project="Debug|Any CPU" />
     <Configuration Solution="Release|x64" Project="Release|Any CPU" />
   </Project>
-  <Project Path="SalanthTweaks\SalanthTweaks\SalanthTweaks.csproj" Type="Classic C#" >
+  <Project Path="SalanthTweaks\SalanthTweaks\SalanthTweaks.csproj" Type="Classic C#">
     <Configuration Solution="Debug|x64" Project="Debug|Any CPU" />
     <Configuration Solution="Release|x64" Project="Release|Any CPU" />
   </Project>
