@@ -41,7 +41,7 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           cache: true
-          cache-dependency-path: ${{ env.plugin_name }}/packages.lock.json
+          cache-dependency-path: ${{ env.plugin_name }}/{{ env.plugin_name }}/packages.lock.json
           dotnet-version: 9.0.x
 
       - name: Determine Dalamud Branch
