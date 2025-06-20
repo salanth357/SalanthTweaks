@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.CompilerServices;
@@ -12,8 +12,6 @@ using KamiToolKit;
 using KamiToolKit.Addon;
 using KamiToolKit.Classes;
 using KamiToolKit.Nodes;
-using KamiToolKit.Nodes.ComponentNodes;
-using KamiToolKit.System;
 using Microsoft.Extensions.Logging;
 using SalanthTweaks.UI;
 using FateState = Dalamud.Game.ClientState.Fates.FateState;
@@ -30,7 +28,7 @@ public partial class FateWindow
         private readonly Dictionary<ushort, FateHolder> fates = [];
         private readonly Dictionary<ushort, FateHolder> dynamicEvents = [];
 
-        private ListNode<NodeBase> listNode = null!;
+        private ListBoxNode<FateEntryNode> listNode = null!;
 
         private unsafe AtkUnitBase* nativeAddon;
         
@@ -38,7 +36,7 @@ public partial class FateWindow
         {
             Service.Get<IClientState>().TerritoryChanged += _ => needsReset = true;
             nativeAddon = addon;
-            listNode = new ListNode<NodeBase>
+            listNode = new ListBoxNode<FateEntryNode>
             {
                 NodeId = MakeNodeId(88),
                 IsVisible = true,
@@ -47,10 +45,16 @@ public partial class FateWindow
                 BackgroundVisible = false,
                 LayoutOrientation = LayoutOrientation.Vertical
             };
-            NativeController.AttachToAddon(listNode, this);
+            NativeController.AttachNode(listNode, this);
             base.OnSetup(addon);
         }
 
+        protected override unsafe void OnShow(AtkUnitBase* addon)
+        {
+            closed = false;
+            needsReset = true;
+            base.OnShow(addon);
+        }
 
         protected override unsafe void OnUpdate(AtkUnitBase* addon)
         {
@@ -66,14 +70,20 @@ public partial class FateWindow
             base.OnUpdate(addon);
         }
 
-        private bool isGoingAway;
         private bool needsReset;
+        private bool closed;
 
         protected override unsafe void OnHide(AtkUnitBase* addon)
         {
-            isGoingAway = true;
             OnClose?.Invoke();
+            closed = true;
             base.OnHide(addon);
+        }
+        
+        protected override unsafe void OnFinalize(AtkUnitBase* addon)
+        {
+            closed = true;
+            base.OnFinalize(addon);
         }
 
         public unsafe void UpdateFateList() => UpdateFateList(nativeAddon);
@@ -86,12 +96,12 @@ public partial class FateWindow
                 dynamicEvents.Clear();
                 listNode.Clear();
             }
-            if (isGoingAway) return;
+
+            if (closed) return;
             if (addon == null) 
                 return;
 
             var cd = EventFramework.Instance()->GetPublicContentDirector();
-            var eventManager = new Lazy<IAddonEventManager>(Service.Get<IAddonEventManager>);
             if (cd is not null && cd->Type == PublicContentDirectorType.OccultCrescent)
             {
                 var pc = (PublicContentOccultCrescent*)cd;
@@ -102,7 +112,10 @@ public partial class FateWindow
                     if (ev.State == DynamicEventState.Inactive)
                     {
                         if (dynamicEvents.Remove(id, out var holder))
-                            listNode.Remove(holder.Node);
+                        {
+                            // TODO: fix this once we can remove from listNode
+                            // listNode.Remove(holder.Node);
+                        }
 
                         continue;
                     }
@@ -119,7 +132,6 @@ public partial class FateWindow
                         };
                         dynamicEvents[id] = fh;
                         listNode.Add(fh.Node);
-                        fh.Node.EnableEvents(eventManager.Value, addon);
                     }
 
                     var duration = ev.State switch
@@ -149,7 +161,10 @@ public partial class FateWindow
                 if (ft.State == FateState.Ended)
                 {
                     if (fates.Remove(ft.FateId, out var holder))
-                        listNode.Remove(holder.Node);
+                    {
+                        // TODO: fix this one we can Remove
+                        // listNode.Remove(holder.Node);
+                    }
                     continue;
                 }
 
@@ -164,7 +179,6 @@ public partial class FateWindow
                     };
                     fates[ft.FateId] = fh;
                     listNode.Add(fh.Node);
-                    fh.Node.EnableEvents(eventManager.Value, addon);
                 }
 
                 var duration = new TimeSpan(0, 0, (int)ft.TimeRemaining);
@@ -175,10 +189,14 @@ public partial class FateWindow
 
             foreach (var oldFate in oldFates)
                 if (fates.Remove(oldFate, out var holder))
-                    listNode.Remove(holder.Node);
-
-            foreach (var n in listNode)
-                n.RemoveFlags(NodeFlags.HasCollision);
+                {
+                    // TODO: Fix this once we can remove
+                    // listNode.Remove(holder.Node);
+                }
+            
+            // TODO: see if we still need this
+            // foreach (var n in listNode)
+            //     n.RemoveFlags(NodeFlags.HasCollision);
             
             nativeAddon->UldManager.UpdateDrawNodeList();
             nativeAddon->UpdateCollisionNodeList(false);
@@ -323,20 +341,6 @@ public partial class FateWindow
         private TextNode timerNode;
         private CircleButtonNode mapButtonNode;
 
-        public override unsafe void EnableEvents(IAddonEventManager eventManager, AtkUnitBase* addon)
-        {
-            mapButtonNode.EnableEvents(eventManager, addon);
-            progressBarNode.EnableEvents(eventManager, addon);
-            base.EnableEvents(eventManager, addon);
-        }
-
-        public override void DisableEvents(IAddonEventManager eventManager)
-        {
-            mapButtonNode.DisableEvents(eventManager);
-            progressBarNode.DisableEvents(eventManager);
-            base.DisableEvents(eventManager);
-        }
-
         public FateEntryNode()
         {
             IsVisible = true;
@@ -396,11 +400,12 @@ public partial class FateWindow
                 EventFlagsSet = true,
             };
             var nc = Service.Get<NativeController>();
-            nc.AttachToNode(iconNode, this, NodePosition.AsLastChild);
-            nc.AttachToNode(nameNode, this, NodePosition.AsLastChild);
-            nc.AttachToNode(progressBarNode, this, NodePosition.AsLastChild);
-            nc.AttachToNode(timerNode, this, NodePosition.AsLastChild);
-            nc.AttachToNode(mapButtonNode, this, NodePosition.AsLastChild);
+            nc.AttachNode(iconNode, this);
+            nc.AttachNode(nameNode, this);
+            nc.AttachNode(progressBarNode, this);
+            nc.AttachNode(timerNode, this);
+            nc.AttachNode(mapButtonNode, this);
+            
         }
 
 
@@ -420,6 +425,7 @@ public partial class FateWindow
 
         private unsafe void Click()
         {
+            Service.Get<IPluginLog>().Information("Click");
             if (IsDynamicEvent)
             {
                 var clientState = Service.Get<IClientState>();

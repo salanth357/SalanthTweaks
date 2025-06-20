@@ -4,6 +4,7 @@ using SalanthTweaks.Interfaces;
 
 namespace SalanthTweaks.Tweaks;
 
+#if DEBUG
 [RegisterSingleton<ITweak>(Duplicate = DuplicateStrategy.Append)]
 public class FailTweak : ITweak
 {
@@ -28,3 +29,4 @@ public class FailTweak : ITweak
     {
     }
 }
+#endif

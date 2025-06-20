@@ -47,9 +47,6 @@
       <Compile Update="Tweaks\FateWindow.FateAddon.cs">
         <DependentUpon>FateWindow.cs</DependentUpon>
       </Compile>
-      <Compile Update="Tweaks\FateAlarm.Config.cs">
-        <DependentUpon>FateAlarm.cs</DependentUpon>
-      </Compile>
       <Compile Update="Tweaks\HideMapInCombat.Config.cs">
         <DependentUpon>HideMapInCombat.cs</DependentUpon>
       </Compile>

@@ -1,23 +1,10 @@
-﻿using System.Net.Mime;
+﻿using System.Globalization;
 using System.Numerics;
-using System.Runtime.CompilerServices;
-using Dalamud.Game.Addon.Events;
-using Dalamud.Game.ClientState.Fates;
-using Dalamud.Game.Text.SeStringHandling.Payloads;
-using Dalamud.Interface.Utility.Raii;
+using Dalamud.Game.ClientState.Keys;
 using Dalamud.Plugin.Services;
-using FFXIVClientStructs.FFXIV.Client.Game.Event;
-using FFXIVClientStructs.FFXIV.Client.Game.InstanceContent;
-using FFXIVClientStructs.FFXIV.Client.System.Framework;
 using FFXIVClientStructs.FFXIV.Client.UI;
-using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using FFXIVClientStructs.FFXIV.Component.GUI;
 using ImGuiNET;
 using KamiToolKit;
-using KamiToolKit.Classes;
-using KamiToolKit.NodeParts;
-using KamiToolKit.Nodes;
-using KamiToolKit.System;
 using SalanthTweaks.Attributes;
 using SalanthTweaks.Config;
 using SalanthTweaks.Enums;
@@ -26,27 +13,48 @@ using SalanthTweaks.Interfaces;
 namespace SalanthTweaks.Tweaks;
 
 [RegisterSingleton<ITweak>(Duplicate = DuplicateStrategy.Append)]
-public unsafe partial class FateWindow : IConfigurableTweak
+public partial class FateWindow : ITweak
 {
-#pragma warning disable CS0169 // Field is never used
-    private NativeController? nativeController;
-    private IAddonEventManager? eventManager;
-#pragma warning restore CS0169 // Field is never used
-
     private FateAddon? Addon { get; set; }
     public string DisplayName => "Fate Window";
     public TweakStatus Status { get; set; }
 
-    public void Dispose()
+    public void Dispose()   
     {
         Addon?.Dispose();
     }
 
-    public void OnInitialize() { }
+    public void OnInitialize()
+    {
+        #if !DEBUG
+        throw new NotImplementedException("Deactivated until fixed");
+        #endif
+    }
 
     public void OnEnable()
     {
+        Service.Get<IFramework>().Update += OnFrameworkUpdate;
+        var nc = Service.Get<NativeController>(); 
 
+        Addon ??= new FateAddon
+        {
+            InternalName = "STFateWindow",
+            Title = "Fates",
+            Size = new Vector2(305.0f+24, 415.0f),
+            NativeController = nc,
+            OpenWindowSoundEffectId = 23,
+            OnClose = () => UIGlobals.PlaySoundEffect(24)
+        };
+    }
+
+    private void OnFrameworkUpdate(IFramework framework)
+    {
+        var keyState = Service.Get<IKeyState>();
+        if (keyState[VirtualKey.CONTROL] && keyState[VirtualKey.SHIFT] && keyState[VirtualKey.F])
+        {
+            Addon?.Toggle();
+            keyState[VirtualKey.F] = false;
+        }
     }
 
     public void DrawConfig()
@@ -62,16 +70,23 @@ public unsafe partial class FateWindow : IConfigurableTweak
     [Command("/fates", "View current fates", AutoEnable: true)]
     public void OnCommand(string command, string args)
     {
-        var nc = Service.Get<NativeController>(); 
-        Addon ??= new FateAddon
+        Addon?.Toggle();
+    }
+    
+    [Command("/sound", "View current fates", AutoEnable: true)]
+    public unsafe void OnSnd(string command, string args)
+    {
+        // var mkdAdn = RaptureAtkUnitManager.Instance()->GetAddonByName("MKDInfo");
+        var style = NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite;
+        args = args.Trim();
+        if (args.StartsWith("0x"))
         {
-            InternalName = "STFateWindow",
-            Title = "Fates",
-            Size = new Vector2(305.0f+24, 415.0f),
-            NativeController = nc,
-            OnClose = () => Addon = null
-        };
-        Addon.Open();
+            args = args[2..];
+            style |= NumberStyles.AllowHexSpecifier;
+        }
+
+        if (uint.TryParse(args, style, CultureInfo.InvariantCulture, out var eff))
+            UIGlobals.PlaySoundEffect(eff);
     }
     
     public class FateWindowConfig : TweakConfig
@@ -87,18 +102,14 @@ public unsafe partial class FateWindow : IConfigurableTweak
     [TweakConfig]
     public FateWindowConfig Config { get; set; } = null!;
 
+    /*
     public class ListItemNode : ResNode
     {
         private CollisionNode collisionNode;
         private NineGridNode hoveredNineGridNode;
         private NineGridNode selectedNineGridNode;
         private NodeBase contentNode;
-
-        public override void EnableEvents(IAddonEventManager eventManager, AtkUnitBase* addon)
-        {
-            collisionNode.EnableEvents(eventManager, addon);
-            base.EnableEvents(eventManager, addon);
-        }
+        
 
         public ListItemNode(NodeBase contentNode)
         {
@@ -160,12 +171,12 @@ public unsafe partial class FateWindow : IConfigurableTweak
                 hoveredNineGridNode.IsVisible = false;
             });
             var nc = Service.Get<NativeController>();
-            nc.AttachToNode(collisionNode, this, NodePosition.AsLastChild);
-            nc.AttachToNode(hoveredNineGridNode, this, NodePosition.AsLastChild);
-            nc.AttachToNode(selectedNineGridNode, this, NodePosition.AsLastChild);
+            nc.AttachNode(collisionNode, this);
+            nc.AttachNode(hoveredNineGridNode, this);
+            nc.AttachNode(selectedNineGridNode, this);
 
             this.contentNode = contentNode;
-            nc.AttachToNode(contentNode, this, NodePosition.AsLastChild);
+            nc.AttachNode(contentNode, this);
 
         }
         
@@ -197,4 +208,5 @@ public unsafe partial class FateWindow : IConfigurableTweak
             }
         }
     }
+    */
 }

@@ -1,12 +1,9 @@
-﻿using Dalamud.Game.ClientState.Fates;
-using Dalamud.Game.ClientState.Objects.Enums;
+﻿using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game.Event;
 using FFXIVClientStructs.FFXIV.Client.Game.Fate;
 using FFXIVClientStructs.FFXIV.Client.Game.InstanceContent;
-using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using FFXIVClientStructs.Havok.Common.Serialize.Util;
 using SalanthTweaks.Enums;
 using SalanthTweaks.Interfaces;
 
@@ -45,18 +42,15 @@ public partial class HideMapInCombat(IFramework Framework, IClientState ClientSt
 
     private unsafe bool IsInDynamicEvent()
     {
-        var ef = EventFramework.Instance();
-        if (ef is null) return false;
-        var pcd = ef->GetPublicContentDirector();
-        if (pcd is null) return false;
-        var de = pcd->DynamicEvents;
-        return de != null && de->CurrentEventId != 0;
+        var dec = DynamicEventContainer.GetInstance();
+        return dec != null && dec->CurrentEventId != 0;
     }
 
     private bool ShouldHide()
     {
         return (ClientState.LocalPlayer?.StatusFlags & StatusFlags.InCombat) != 0 && (IsInFate() || IsInDynamicEvent());
     }
+
     private unsafe void OnFrameworkUpdate(IFramework _)
     {
         var shouldHide = ShouldHide();
