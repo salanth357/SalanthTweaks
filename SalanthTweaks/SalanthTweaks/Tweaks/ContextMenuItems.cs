@@ -20,7 +20,7 @@ using ObjectKind = Dalamud.Game.ClientState.Objects.Enums.ObjectKind;
 namespace SalanthTweaks.Tweaks;
 
 [RegisterSingleton<ITweak>(Duplicate = DuplicateStrategy.Append)]
-public partial class ContextMenuItems : IConfigurableTweak
+public partial class ContextMenuItems : ITweak
 {
     public void Dispose()
     {

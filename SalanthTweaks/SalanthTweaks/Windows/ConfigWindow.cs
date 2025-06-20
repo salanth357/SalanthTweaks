@@ -146,10 +146,9 @@ public class ConfigWindow : Window, IDisposable
 
             using (Service.Get<FontHelper>().HeaderFont.Push())
                 ImGuiHelpers.CenteredText("SalanthTweaks!");
+            ImGui.Separator();
             
-            
-            var version = GetType().Assembly.GetName().Version?.ToString();
-            version = null;
+            var version = GetType().Assembly.GetName().Version?.ToString(3);
             var label = $"v{version ?? "Unk"}";
 #if DEBUG
             label += "-dev";
@@ -180,10 +179,7 @@ public class ConfigWindow : Window, IDisposable
 
         using (Service.Get<FontHelper>().HeaderFont.Push())
             ImGuiHelpers.CenteredText(SelectedTweak.DisplayName);
-        
-        if (SelectedTweak is IConfigurableTweak tweak)
-        {
-            tweak.DrawConfig();
-        }
+        ImGui.Separator();
+        SelectedTweak.DrawConfig();
     }
 }
