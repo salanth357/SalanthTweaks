@@ -1,12 +1,8 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
-using System.Reflection;
+﻿using System.Diagnostics.CodeAnalysis;
 using Dalamud.Game;
 using Dalamud.Game.ClientState.Objects;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
-using FFXIVClientStructs;
-using KamiToolKit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SalanthTweaks.Logger;
@@ -86,7 +82,9 @@ public static class Service
             .AddSingleton(DalamudServiceFactory<ITextureSubstitutionProvider>)
             .AddSingleton(DalamudServiceFactory<ITitleScreenMenu>)
             .AddSingleton(DalamudServiceFactory<IToastGui>)
-            .AddSingleton(_ => new NativeController(pluginInterface))
+            #if Enable_KTK
+            .AddSingleton(_ => new KamiToolKit.NativeController(pluginInterface))
+            #endif
 #pragma warning disable SeStringEvaluator
             .AddSingleton(DalamudServiceFactory<ISeStringEvaluator>)
 #pragma warning restore SeStringEvaluator

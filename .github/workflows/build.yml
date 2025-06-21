@@ -78,7 +78,7 @@ jobs:
         with:
           limit-access-to-users: salanth357
       - name: Build
-        run: dotnet build --no-restore -c Release -clp:NoSummary
+        run: dotnet build SalanthTweaks/SalanthTweaks.csproj --no-restore -c Release -clp:NoSummary
 
       - name: Rename manifest
         if: github.event_name != 'pull_request'
