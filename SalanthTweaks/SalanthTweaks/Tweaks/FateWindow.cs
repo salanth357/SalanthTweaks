@@ -26,9 +26,7 @@ public partial class FateWindow : ITweak
 
     public void OnInitialize()
     {
-        #if !DEBUG
-        throw new NotImplementedException("Deactivated until fixed");
-        #endif
+
     }
 
     public void OnEnable()
@@ -45,6 +43,9 @@ public partial class FateWindow : ITweak
             OpenWindowSoundEffectId = 23,
             OnClose = () => UIGlobals.PlaySoundEffect(24)
         };
+        #if DEBUG
+        Addon.Toggle();
+        #endif
     }
 
     private void OnFrameworkUpdate(IFramework framework)
@@ -71,22 +72,6 @@ public partial class FateWindow : ITweak
     public void OnCommand(string command, string args)
     {
         Addon?.Toggle();
-    }
-    
-    [Command("/sound", "View current fates", AutoEnable: true)]
-    public unsafe void OnSnd(string command, string args)
-    {
-        // var mkdAdn = RaptureAtkUnitManager.Instance()->GetAddonByName("MKDInfo");
-        var style = NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite;
-        args = args.Trim();
-        if (args.StartsWith("0x"))
-        {
-            args = args[2..];
-            style |= NumberStyles.AllowHexSpecifier;
-        }
-
-        if (uint.TryParse(args, style, CultureInfo.InvariantCulture, out var eff))
-            UIGlobals.PlaySoundEffect(eff);
     }
     
     public class FateWindowConfig : TweakConfig

@@ -50,5 +50,8 @@
       <Compile Update="Tweaks\HideMapInCombat.Config.cs">
         <DependentUpon>HideMapInCombat.cs</DependentUpon>
       </Compile>
+      <Compile Update="Tweaks\FateWindow.FateEntryNode.cs">
+        <DependentUpon>FateWindow.cs</DependentUpon>
+      </Compile>
     </ItemGroup>
 </Project>
