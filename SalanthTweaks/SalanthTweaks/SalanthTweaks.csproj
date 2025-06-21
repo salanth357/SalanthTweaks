@@ -6,6 +6,14 @@
         <PackageProjectUrl>https://github.com/salanth357/SalanthTweaks</PackageProjectUrl>
         <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
         <IsPackable>false</IsPackable>
+        <Configurations>Release;Debug</Configurations>
+        <Platforms>x64</Platforms>
+        <Enable_KTK>false</Enable_KTK>
+    </PropertyGroup>
+    
+    <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+        <Enable_KTK>true</Enable_KTK>
+        <DefineConstants>$(DefineConstants);Enable_KTK</DefineConstants>
     </PropertyGroup>
 
     <ItemGroup>
@@ -21,7 +29,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\FFXIVClientStructs\InteropGenerator\InteropGenerator.csproj" />
-      <ProjectReference Include="..\..\KamiToolKit\KamiToolKit.csproj" />
+      <ProjectReference Include="..\..\KamiToolKit\KamiToolKit.csproj" Condition="'$(Enable_KTK)'=='true'"/>
       <ProjectReference Include="..\..\SalanthTweaks.Generators\SalanthTweaks.Generators\SalanthTweaks.Generators.csproj"  OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
     </ItemGroup>
 
@@ -33,7 +41,7 @@
     <PropertyGroup Condition="Exists('$(ProjectDir)..\..\FFXIVClientStructs')">
         <Use_Dalamud_FFXIVClientStructs>false</Use_Dalamud_FFXIVClientStructs>
         <InteropGenerator_InteropNamespace>SalanthTweaks</InteropGenerator_InteropNamespace>
-        <DefineConstants>HAS_LOCAL_CS</DefineConstants>
+        <DefineConstants>$(DefineConstants);HAS_LOCAL_CS</DefineConstants>
     </PropertyGroup>
 
     <ItemGroup Condition="Exists('$(ProjectDir)..\..\FFXIVClientStructs')">
@@ -49,9 +57,21 @@
       </Compile>
       <Compile Update="Tweaks\HideMapInCombat.Config.cs">
         <DependentUpon>HideMapInCombat.cs</DependentUpon>
-      </Compile>
+      </Compile> 
       <Compile Update="Tweaks\FateWindow.FateEntryNode.cs">
         <DependentUpon>FateWindow.cs</DependentUpon>
       </Compile>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Enable_KTK)'!='true'">
+      <ProjectReference Remove="..\..\KamiToolKit\KamiToolKit.csproj"/>  
+      <Compile Remove="Tweaks\FateWindow.cs"/>
+      <Compile Remove="Tweaks\FateList.cs"/>
+      <Compile Remove="Tweaks\FateWindow.FateAddon.cs"/>
+      <Compile Remove="Tweaks\FateWindow.FateEntryNode.cs"/>
+      <None Include="Tweaks\FateWindow.cs"/>
+      <None Include="Tweaks\FateList.cs"/>
+      <None Include="Tweaks\FateWindow.FateAddon.cs"/>
+      <None Include="Tweaks\FateWindow.FateEntryNode.cs"/>
     </ItemGroup>
 </Project>
