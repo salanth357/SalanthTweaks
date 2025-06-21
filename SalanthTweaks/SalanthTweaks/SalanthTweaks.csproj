@@ -7,6 +7,10 @@
         <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
         <IsPackable>false</IsPackable>
     </PropertyGroup>
+    
+    <PropertyGroup Condition="'$(Configuration)'=='DEBUG'">
+        <Enable_KTK>true</Enable_KTK>
+    </PropertyGroup>
 
     <ItemGroup>
         <Content Include="SalanthTweaks.json" />
@@ -21,7 +25,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\FFXIVClientStructs\InteropGenerator\InteropGenerator.csproj" />
-      <ProjectReference Include="..\..\KamiToolKit\KamiToolKit.csproj" />
+      <ProjectReference Include="..\..\KamiToolKit\KamiToolKit.csproj" Condition="'$(Enable_KTK)'=='true'"/>
       <ProjectReference Include="..\..\SalanthTweaks.Generators\SalanthTweaks.Generators\SalanthTweaks.Generators.csproj"  OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
     </ItemGroup>
 
@@ -49,9 +53,20 @@
       </Compile>
       <Compile Update="Tweaks\HideMapInCombat.Config.cs">
         <DependentUpon>HideMapInCombat.cs</DependentUpon>
-      </Compile>
+      </Compile> 
       <Compile Update="Tweaks\FateWindow.FateEntryNode.cs">
         <DependentUpon>FateWindow.cs</DependentUpon>
       </Compile>
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(Enable_KTK)'!='true'">
+      <Compile Remove="Tweaks\FateWindow.cs"/>
+      <Compile Remove="Tweaks\FateList.cs"/>
+      <Compile Remove="Tweaks\FateWindow.FateAddon.cs"/>
+      <Compile Remove="Tweaks\FateWindow.FAteEntryNode.cs"/>
+      <None Include="Tweaks\FateWindow.cs"/>
+      <None Include="Tweaks\FateList.cs"/>
+      <None Include="Tweaks\FateWindow.FateAddon.cs"/>
+      <None Include="Tweaks\FateWindow.FateEntryNode.cs"/>
     </ItemGroup>
 </Project>
