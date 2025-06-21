@@ -9,7 +9,7 @@ on:
     paths-ignore:
       - .editorconfig
       - .gitattributes
-      - .github/**
+#      - .github/**
       - .gitignore
       - CHANGELOG.md
       - LICENSE
@@ -73,7 +73,10 @@ jobs:
 
       - name: Restore dependencies
         run: dotnet restore --locked-mode
-
+      - name: Upterm session
+        uses: lhotari/action-upterm@v1
+        with:
+          limit-access-to-users: salanth357
       - name: Build
         run: dotnet build --no-restore -c Release -clp:NoSummary
 
