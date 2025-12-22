@@ -11,7 +11,7 @@
         <Enable_KTK>false</Enable_KTK>
     </PropertyGroup>
     
-    <PropertyGroup Condition="'$(Configuration)'=='Debug'">
+    <PropertyGroup>
         <Enable_KTK>true</Enable_KTK>
         <DefineConstants>$(DefineConstants);Enable_KTK</DefineConstants>
     </PropertyGroup>
