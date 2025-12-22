@@ -20,11 +20,14 @@ public class FontHelper
         {
             HeaderFont = iface.UiBuilder.FontAtlas.NewDelegateFontHandle(e =>
             {
-                e.OnPreBuild(tk => tk.AddDalamudDefaultFont(-2));
+                e.OnPreBuild(tk =>
+                                 tk.AddDalamudDefaultFont(-2));
             });
             LargeFont = iface.UiBuilder.FontAtlas.NewDelegateFontHandle(e =>
             {
-                e.OnPreBuild(tk => tk.AddDalamudDefaultFont(iface.UiBuilder.DefaultFontSpec.SizePx + 1.5f));
+                e.OnPreBuild(tk => tk.AddDalamudDefaultFont(
+                                 iface.UiBuilder.DefaultFontSpec
+                                      .SizePx + 1.5f));
             });
         }
     }

@@ -3,7 +3,7 @@ using SalanthTweaks.Enums;
 
 namespace SalanthTweaks.Interfaces;
 
- public interface ITweak : IDisposable
+public interface ITweak : IDisposable
 {
     public string InternalName => GetType().Name;
     public string DisplayName { get; }

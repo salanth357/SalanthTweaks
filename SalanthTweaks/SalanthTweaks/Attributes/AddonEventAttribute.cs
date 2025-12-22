@@ -1,5 +1,6 @@
 ﻿using Dalamud.Game.Addon.Lifecycle;
 using JetBrains.Annotations;
+
 namespace SalanthTweaks.Attributes;
 
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]

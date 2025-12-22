@@ -12,7 +12,11 @@ using SalanthTweaks.Interfaces;
 namespace SalanthTweaks.Services;
 
 [RegisterSingleton]
-public sealed class TweakManager(IPluginLog PluginLog, PluginConfig PluginConfig, IEnumerable<ITweak> Tweaks, IGameInteropProvider GameInteropProvider)
+public sealed class TweakManager(
+    IPluginLog PluginLog,
+    PluginConfig PluginConfig,
+    IEnumerable<ITweak> Tweaks,
+    IGameInteropProvider GameInteropProvider)
 {
     public void Initialize()
     {
@@ -53,12 +57,11 @@ public sealed class TweakManager(IPluginLog PluginLog, PluginConfig PluginConfig
 
     public void Shutdown()
     {
-        foreach (var tweak in Tweaks) 
+        foreach (var tweak in Tweaks)
         {
             if (tweak.Status == TweakStatus.Enabled)
                 DisableTweak(tweak, false);
         }
-        
     }
 
     public void EnableTweak(ITweak tweak)
@@ -74,6 +77,7 @@ public sealed class TweakManager(IPluginLog PluginLog, PluginConfig PluginConfig
             tweak.Status = TweakStatus.InitializationFailed;
             PluginLog.Error(ex, "{}", $"[{tweak.InternalName}] Failed to enable");
         }
+
         tweak.Status = TweakStatus.Enabled;
         if (PluginConfig.EnabledTweaks.Add(tweak.InternalName))
             PluginConfig.Save();
@@ -93,13 +97,15 @@ public sealed class TweakManager(IPluginLog PluginLog, PluginConfig PluginConfig
             PluginLog.Error(ex, "{}", $"[{tweak.InternalName}] Exception on disable");
             return;
         }
+
         if (save && PluginConfig.EnabledTweaks.Remove(tweak.InternalName))
             PluginConfig.Save();
     }
-    
+
     private void EnableAutoHooks(ITweak tweak)
     {
-        tweak.GetType().GetFields(BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic).Select(info => (info, info.GetCustomAttribute<Attributes.AutoHookAttribute>()))
+        tweak.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+             .Select(info => (info, info.GetCustomAttribute<Attributes.AutoHookAttribute>()))
              .ForEach(item =>
              {
                  PluginLog.Info($"{item.info} test enable");
@@ -107,7 +113,7 @@ public sealed class TweakManager(IPluginLog PluginLog, PluginConfig PluginConfig
                  if (item.info.GetValue(tweak) is not IDalamudHook hook) return;
                  hook.GetType().GetMethod("Enable")?.Invoke(hook, null);
              });
-        
+
         tweak.GetType().GetProperties().Select(info => (info, info.GetCustomAttribute<Attributes.AutoHookAttribute>()))
              .ForEach(item =>
              {
@@ -116,10 +122,11 @@ public sealed class TweakManager(IPluginLog PluginLog, PluginConfig PluginConfig
                  hook.GetType().GetMethod("Enable")?.Invoke(hook, null);
              });
     }
-    
+
     private static void DisableAutoHooks(ITweak tweak)
     {
-        tweak.GetType().GetFields(BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic).Select(info => (info, info.GetCustomAttribute<Attributes.AutoHookAttribute>()))
+        tweak.GetType().GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+             .Select(info => (info, info.GetCustomAttribute<Attributes.AutoHookAttribute>()))
              .ForEach(item =>
              {
                  if (item.Item2 is null || !item.Item2.Disable) return;
@@ -127,7 +134,8 @@ public sealed class TweakManager(IPluginLog PluginLog, PluginConfig PluginConfig
                  hook.GetType().GetMethod("Disable")?.Invoke(hook, null);
              });
 
-        tweak.GetType().GetProperties(BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic).Select(info => (info, info.GetCustomAttribute<Attributes.AutoHookAttribute>()))
+        tweak.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+             .Select(info => (info, info.GetCustomAttribute<Attributes.AutoHookAttribute>()))
              .ForEach(item =>
              {
                  if (item.Item2 is null || !item.Item2.Disable) return;
@@ -137,7 +145,9 @@ public sealed class TweakManager(IPluginLog PluginLog, PluginConfig PluginConfig
     }
 
 
-    private readonly IDictionary<ITweak, List<IAddonLifecycle.AddonEventDelegate>> eventHandlers = new Dictionary<ITweak, List<IAddonLifecycle.AddonEventDelegate>>();
+    private readonly IDictionary<ITweak, List<IAddonLifecycle.AddonEventDelegate>> eventHandlers =
+        new Dictionary<ITweak, List<IAddonLifecycle.AddonEventDelegate>>();
+
     private void EnableAddonHooks(ITweak tweak)
     {
         var lifecycle = Service.Get<IAddonLifecycle>();
@@ -153,7 +163,7 @@ public sealed class TweakManager(IPluginLog PluginLog, PluginConfig PluginConfig
                          return;
 
                      if (item.info.ReturnType != typeof(void)) return;
-                     
+
                      if (!eventHandlers.TryGetValue(tweak, out var handlers))
                      {
                          eventHandlers[tweak] = handlers = [];
@@ -169,11 +179,12 @@ public sealed class TweakManager(IPluginLog PluginLog, PluginConfig PluginConfig
 
     private void DisableAddonHooks(ITweak tweak)
     {
-        var lifecycle = Service.Get<IAddonLifecycle>(); 
+        var lifecycle = Service.Get<IAddonLifecycle>();
         if (eventHandlers.TryGetValue(tweak, out var handlers))
         {
             lifecycle.UnregisterListener(handlers.ToArray());
         }
+
         eventHandlers.Remove(tweak);
     }
 

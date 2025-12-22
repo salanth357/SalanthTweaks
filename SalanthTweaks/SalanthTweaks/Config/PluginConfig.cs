@@ -13,7 +13,6 @@ namespace SalanthTweaks.Config;
 [Serializable]
 public partial class PluginConfig : IPluginConfiguration
 {
-
     [JsonIgnore]
     public const int CurrentVersion = 0;
 
@@ -37,10 +36,10 @@ public partial class PluginConfig : IPluginConfiguration
     private bool Upgrade()
     {
         // Update globals
-     //    Service.Get<TweakManager>().UpgradeConfigs();
+        // Service.Get<TweakManager>().UpgradeConfigs();
         return false;
     }
-    
+
     public void Save() => PluginInterface!.SavePluginConfig(this);
 }
 

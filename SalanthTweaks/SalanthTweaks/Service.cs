@@ -1,9 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using Dalamud.Game;
-using Dalamud.Game.ClientState.Objects;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
-using KamiToolKit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SalanthTweaks.Logger;
@@ -14,14 +11,14 @@ public static class Service
 {
     public static IServiceCollection Collection { get; } = new ServiceCollection();
 
-    public static ServiceProvider? Provider { get; private set;  }
+    public static ServiceProvider? Provider { get; private set; }
     public static void BuildProvider() => Provider = Collection.BuildServiceProvider();
 
     public static void Dispose() => Provider?.Dispose();
 
     public static T Get<T>() where T : notnull
         => Provider!.GetRequiredService<T>();
-    
+
     public static bool TryGet<T>([NotNullWhen(returnValue: true)] out T? service)
     {
         if (Provider == null)
@@ -41,12 +38,10 @@ public static class Service
             return false;
         }
     }
-    
-    public static IServiceCollection AddDalamud(this IServiceCollection collection, IDalamudPluginInterface pluginInterface)
+
+    public static IServiceCollection AddDalamud(
+        this IServiceCollection collection, IDalamudPluginInterface pluginInterface)
     {
-        #if Enable_KTK
-            KamiToolKitLibrary.Initialize(pluginInterface); 
-        #endif
         collection
             .AddSingleton(pluginInterface)
             .AddSingleton(DalamudServiceFactory<IAddonEventManager>)
@@ -85,19 +80,21 @@ public static class Service
             .AddSingleton(DalamudServiceFactory<ITextureSubstitutionProvider>)
             .AddSingleton(DalamudServiceFactory<ITitleScreenMenu>)
             .AddSingleton(DalamudServiceFactory<IToastGui>)
-            #if Enable_KTK
             .AddSingleton(_ => new KamiToolKit.Overlay.OverlayController())
-            #endif
             .AddSingleton(DalamudServiceFactory<ISeStringEvaluator>)
             .AddLogging(builder =>
             {
                 builder.ClearProviders();
                 builder.SetMinimumLevel(LogLevel.Trace);
-                builder.Services.AddSingleton<ILoggerProvider>(serviceProvider => new DalamudLoggerProvider(serviceProvider.GetRequiredService<IPluginLog>()) );
+                builder.Services.AddSingleton<ILoggerProvider>(serviceProvider =>
+                                                                   new DalamudLoggerProvider(
+                                                                       serviceProvider
+                                                                           .GetRequiredService<IPluginLog>()));
             });
 
         return collection;
 
-        T DalamudServiceFactory<T>(IServiceProvider serviceProvider) => new Services.DalamudServiceWrapper<T>(pluginInterface).Service;
+        T DalamudServiceFactory<T>(IServiceProvider serviceProvider) =>
+            new Services.DalamudServiceWrapper<T>(pluginInterface).Service;
     }
 }

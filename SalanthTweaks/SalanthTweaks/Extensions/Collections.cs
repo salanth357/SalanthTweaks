@@ -9,6 +9,4 @@ public static class Collections
         foreach (var element in source)
             action(element);
     }
-
 }
-

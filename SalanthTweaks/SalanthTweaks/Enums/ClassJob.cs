@@ -4,7 +4,7 @@ public enum ClassJob
 {
     // None
     Adventurer = 0,
-    
+
     // Tanks
     Gladiator = 1,
     Paladin = 19,

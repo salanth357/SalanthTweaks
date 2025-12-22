@@ -18,12 +18,11 @@ namespace SalanthTweaks.Windows;
 [RegisterSingleton]
 public class ConfigWindow : Window, IDisposable
 {
-
     private readonly TweakManager TweakManager;
     private ITweak[] Tweaks;
     private ITweak? SelectedTweak;
-    
-    
+
+
     public ConfigWindow(
         TweakManager tweakManager,
         WindowManager windowManager,
@@ -33,18 +32,16 @@ public class ConfigWindow : Window, IDisposable
                 ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.NoResize;
         AllowClickthrough = false;
         AllowPinning = false;
-         
+
         Size = new Vector2(700, 575);
         SizeCondition = ImGuiCond.Appearing;
-        
+
         TweakManager = tweakManager;
         Tweaks = tweaks.ToArray();
         windowManager.AddWindow(this);
     }
 
-    public void Dispose()
-    {
-    }
+    public void Dispose() { }
 
     public override void Draw()
     {
@@ -57,9 +54,9 @@ public class ConfigWindow : Window, IDisposable
     {
         var scale = ImGuiHelpers.GlobalScale;
         using var section = ImRaii.Child("##Sidebar", new Vector2(250 * scale, -1), true);
-        
+
         using var tbl = ImRaii.Table("##SBTable", 2, ImGuiTableFlags.NoSavedSettings);
-        
+
         ImGui.TableSetupColumn("Check", ImGuiTableColumnFlags.WidthFixed);
         ImGui.TableSetupColumn("Tweak", ImGuiTableColumnFlags.WidthStretch);
 
@@ -68,9 +65,9 @@ public class ConfigWindow : Window, IDisposable
             ImGui.TableNextRow();
             ImGui.TableNextColumn();
 
-            
+
             var status = tweak.Status;
-            
+
             using var labelStyle = status switch
             {
                 TweakStatus.InitializationFailed or TweakStatus.Outdated => ImRaii.PushColor(
@@ -80,7 +77,7 @@ public class ConfigWindow : Window, IDisposable
                     ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.DalamudGrey),
                 _ => ImRaii.PushColor(ImGuiCol.Text, ImGuiColors.DalamudGrey)
             };
-            
+
             if (status is TweakStatus.InitializationFailed or TweakStatus.Outdated)
             {
                 Vector2 tl, br;
@@ -94,8 +91,9 @@ public class ConfigWindow : Window, IDisposable
                     ImGui.TableNextColumn();
                     ImGui.Text(tweak.DisplayName);
                     br = ImGui.GetItemRectMax();
-                    br.Y = tl.Y+ImGui.GetFrameHeight();
+                    br.Y = tl.Y + ImGui.GetFrameHeight();
                 }
+
                 if (ImGui.IsMouseHoveringRect(tl, br, false))
                     using (ImRaii.Tooltip())
                         ImGui.TextUnformatted(Enum.GetName(status));
@@ -108,6 +106,7 @@ public class ConfigWindow : Window, IDisposable
                     if (!enabled) TweakManager.DisableTweak(tweak);
                     else TweakManager.EnableTweak(tweak);
                 }
+
                 ImGui.TableNextColumn();
                 if (ImGui.Selectable($"{tweak.DisplayName}##Selectable_{tweak.InternalName}",
                                      SelectedTweak != null && SelectedTweak == tweak))
@@ -126,7 +125,7 @@ public class ConfigWindow : Window, IDisposable
             }
 
 
-            ImGui.AlignTextToFramePadding();  
+            ImGui.AlignTextToFramePadding();
         }
     }
 
@@ -142,7 +141,7 @@ public class ConfigWindow : Window, IDisposable
             using (Service.Get<FontHelper>().HeaderFont.Push())
                 ImGuiHelpers.CenteredText("SalanthTweaks!");
             ImGui.Separator();
-            
+
             var version = GetType().Assembly.GetName().Version?.ToString(3);
             var label = $"v{version ?? "Unk"}";
 #if DEBUG
@@ -169,6 +168,7 @@ public class ConfigWindow : Window, IDisposable
             {
                 Task.Run(() => Util.OpenLink(lnk));
             }
+
             return;
         }
 

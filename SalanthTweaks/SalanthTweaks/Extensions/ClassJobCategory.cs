@@ -56,7 +56,7 @@ public static class EnumExtensions
             ClassJob.Miner or
                 ClassJob.Botanist or
                 ClassJob.Fisher => Role.Gatherer,
-            
+
             ClassJob.Adventurer => Role.None,
             _ => throw new ArgumentOutOfRangeException(nameof(classJob), classJob, null)
         };

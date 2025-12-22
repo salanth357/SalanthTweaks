@@ -1,6 +1,3 @@
 ﻿namespace SalanthTweaks.Extensions;
 
-public static class InventoryExtensions
-{
-    
-}
+public static class InventoryExtensions { }

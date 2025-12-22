@@ -7,6 +7,6 @@ public static class StructPeek
         return *(TF*)((IntPtr)obj + fieldOffset);
     }
 
-    private static uint BaseNodeId = ((uint)'S' << 24) | ((uint)'L' << 16);  
+    private static uint BaseNodeId = ((uint)'S' << 24) | ((uint)'L' << 16);
     public static uint MakeNodeId(uint id) => id | BaseNodeId;
 }

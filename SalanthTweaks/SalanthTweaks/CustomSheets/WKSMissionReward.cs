@@ -26,11 +26,15 @@ public readonly unsafe struct WKSMissionReward(ExcelPage page, uint offset, uint
 
     public readonly Collection<byte> TypeIndex => new(page, offset, offset, &TypeIndexCtor, size: 3);
 
-    private static ushort ExpModifierCtor(ExcelPage page, uint parentOffset, uint offset, uint i) => page.ReadUInt16(offset + 4 + i * 2);
-    private static ushort ResearchRewardCtor(ExcelPage page, uint parentOffset, uint offset, uint i) => page.ReadUInt16(offset + 14 + i * 2);
-    private static byte TypeIndexCtor(ExcelPage page, uint parentOffset, uint offset, uint i) => page.ReadUInt8(offset + 26 + i);
+    private static ushort ExpModifierCtor(ExcelPage page, uint parentOffset, uint offset, uint i) =>
+        page.ReadUInt16(offset + 4 + i * 2);
+
+    private static ushort ResearchRewardCtor(ExcelPage page, uint parentOffset, uint offset, uint i) =>
+        page.ReadUInt16(offset + 14 + i * 2);
+
+    private static byte TypeIndexCtor(ExcelPage page, uint parentOffset, uint offset, uint i) =>
+        page.ReadUInt8(offset + 26 + i);
 
     static WKSMissionReward IExcelRow<WKSMissionReward>.Create(ExcelPage page, uint offset, uint row) =>
         new(page, offset, row);
-
 }

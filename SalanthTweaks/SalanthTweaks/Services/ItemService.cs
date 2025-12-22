@@ -1,5 +1,4 @@
-﻿
-using Dalamud.Game;
+﻿using Dalamud.Game;
 using Dalamud.Plugin.Services;
 using Lumina.Excel.Sheets;
 using Lumina.Text;
@@ -20,12 +19,12 @@ public class ItemService
 
         return (isEdgeColor ? 548u : 547u) + (item.Rarity * 2u);
     }
-    
+
     public uint GetItemRarityColorType(Item item, bool isEdgeColor = false)
     {
         if (IsEventItem(item.RowId))
             return GetItemRarityColorType(1, isEdgeColor);
-        
+
         return (isEdgeColor ? 548u : 547u) + (item.Rarity * 2u);
     }
 
@@ -38,9 +37,9 @@ public class ItemService
 
         return GetItemLink(item, language);
     }
+
     public ReadOnlySeString GetItemLink(Item item, ClientLanguage? language = null)
     {
-
         var itemName = item.Name.ExtractText();
 
         if (IsHighQuality(item.RowId))

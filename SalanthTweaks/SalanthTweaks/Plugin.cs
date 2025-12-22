@@ -9,19 +9,24 @@ using SalanthTweaks.Config;
 using SalanthTweaks.Windows;
 using SalanthTweaks.Services;
 using InteropGenerator.Runtime;
+using KamiToolKit;
+
 namespace SalanthTweaks;
 
 // ReSharper disable once ClassNeverInstantiated.Global
 public sealed class Plugin : IDalamudPlugin
 {
-    [PluginService] internal static IDalamudPluginInterface PluginInterface { get; private set; } = null!;
-    [PluginService] internal static IPluginLog Log { get; private set; } = null!;
+    [PluginService]
+    internal static IDalamudPluginInterface PluginInterface { get; private set; } = null!;
+
+    [PluginService]
+    internal static IPluginLog Log { get; private set; } = null!;
 
     public readonly WindowSystem WindowSystem = new("SalanthTweaks");
 
-    public Plugin(IFramework framework, IDalamudPluginInterface pluginInterface, IDataManager dataManager, ISigScanner sigScanner)
+    public Plugin(
+        IFramework framework, IDalamudPluginInterface pluginInterface, IDataManager dataManager, ISigScanner sigScanner)
     {
-        
 #if HAS_LOCAL_CS
         Resolver.GetInstance.Setup(
             sigScanner.SearchBase,
@@ -30,12 +35,13 @@ public sealed class Plugin : IDalamudPlugin
         FFXIVClientStructs.Interop.Generated.Addresses.Register();
         Resolver.GetInstance.Resolve();
 #endif
-        
+
+        KamiToolKitLibrary.Initialize(pluginInterface);
         Service.Collection.AddDalamud(PluginInterface)
                .AddSingleton(PluginConfig.Load)
                .AddSalanthTweaks();
         Service.BuildProvider();
-        
+
         framework.RunOnFrameworkThread(() =>
         {
             Service.Get<CommandService>().Initialize();
@@ -62,7 +68,7 @@ public sealed class Plugin : IDalamudPlugin
     {
         ToggleConfigUi();
     }
-    
+
     public static void ToggleConfigUi()
     {
         Service.Get<ConfigWindow>().Toggle();

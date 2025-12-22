@@ -1,10 +1,10 @@
 {
-  "Author": "salanth357",
-  "Name": "SalanthTweaks",
-  "Punchline": "My weird random tweaks",
-  "Description": "A description that shows up in /xlplugins. List any major slash-command(s).",
-  "ApplicableVersion": "any",
-  "Tags": [],
-  "LoadRequiredState": 2,
-  "LoadSync": true
+    "Author": "salanth357",
+    "Name": "SalanthTweaks",
+    "Punchline": "My weird random tweaks",
+    "Description": "A description that shows up in /xlplugins. List any major slash-command(s).",
+    "ApplicableVersion": "any",
+    "Tags": [],
+    "LoadRequiredState": 2,
+    "LoadSync": true
 }

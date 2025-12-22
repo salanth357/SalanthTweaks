@@ -13,8 +13,7 @@ public class CommandService(ICommandManager CommandManager, IEnumerable<ITweak> 
 {
     internal class CommandHandler(CommandAttribute attr, IReadOnlyCommandInfo.HandlerDelegate dg)
     {
-           
-        internal CommandInfo Info => new (dg)
+        internal CommandInfo Info => new(dg)
         {
             ShowInHelp = attr.ShowInHelp,
             HelpMessage = attr.HelpMessage
@@ -24,6 +23,7 @@ public class CommandService(ICommandManager CommandManager, IEnumerable<ITweak> 
     }
 
     private readonly Dictionary<string, CommandHandler> commands = [];
+
     public void Initialize()
     {
         foreach (var tweak in tweaks)
@@ -40,8 +40,9 @@ public class CommandService(ICommandManager CommandManager, IEnumerable<ITweak> 
 
     public void Register(IReadOnlyCommandInfo.HandlerDelegate dg)
     {
-        var attr = dg.Method.GetCustomAttribute<CommandAttribute>() ?? throw new Exception($"Missing CommandAttribute on {dg.Method.Name}");
-        Register(attr, dg);        
+        var attr = dg.Method.GetCustomAttribute<CommandAttribute>() ??
+                   throw new Exception($"Missing CommandAttribute on {dg.Method.Name}");
+        Register(attr, dg);
     }
 
     private void Register(CommandAttribute attr, IReadOnlyCommandInfo.HandlerDelegate dg)
@@ -52,8 +53,11 @@ public class CommandService(ICommandManager CommandManager, IEnumerable<ITweak> 
             Enable(cmd);
     }
 
-    public void Enable(IReadOnlyCommandInfo.HandlerDelegate dg) => Enable(dg.Method.GetCustomAttribute<CommandAttribute>() ?? throw new Exception($"Missing CommandAttribute on {dg.Method.Name}"));
-        public void Enable(CommandAttribute attr) => Enable(commands[attr.Command]); 
+    public void Enable(IReadOnlyCommandInfo.HandlerDelegate dg) => Enable(
+        dg.Method.GetCustomAttribute<CommandAttribute>() ??
+        throw new Exception($"Missing CommandAttribute on {dg.Method.Name}"));
+
+    public void Enable(CommandAttribute attr) => Enable(commands[attr.Command]);
     public void Enable(string command) => Enable(commands[command]);
 
     private void Enable(CommandHandler cmd)
@@ -61,8 +65,11 @@ public class CommandService(ICommandManager CommandManager, IEnumerable<ITweak> 
         CommandManager.AddHandler(cmd.Command, cmd.Info);
     }
 
-    public void Disable(IReadOnlyCommandInfo.HandlerDelegate dg) => Disable(dg.Method.GetCustomAttribute<CommandAttribute>() ?? throw new Exception($"Missing CommandAttribute on {dg.Method.Name}"));
-    public void Disable(CommandAttribute attr) => Disable(commands[attr.Command]); 
+    public void Disable(IReadOnlyCommandInfo.HandlerDelegate dg) => Disable(
+        dg.Method.GetCustomAttribute<CommandAttribute>() ??
+        throw new Exception($"Missing CommandAttribute on {dg.Method.Name}"));
+
+    public void Disable(CommandAttribute attr) => Disable(commands[attr.Command]);
     public void Disable(string command) => Disable(commands[command]);
 
     private void Disable(CommandHandler cmd)
@@ -76,6 +83,7 @@ public class CommandService(ICommandManager CommandManager, IEnumerable<ITweak> 
         {
             Disable(cmd);
         }
+
         GC.SuppressFinalize(this);
     }
 }

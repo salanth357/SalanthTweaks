@@ -1,41 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Dalamud.NET.Sdk/14.0.1">
     <PropertyGroup>
-        <Version>1.2.0</Version>
+        <Version>1.2.1</Version>
         <Description>Some kind of mistake, I'm sure</Description>
         <PackageProjectUrl>https://github.com/salanth357/SalanthTweaks</PackageProjectUrl>
         <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
         <IsPackable>false</IsPackable>
         <Configurations>Release;Debug</Configurations>
         <Platforms>x64</Platforms>
-        <Enable_KTK>false</Enable_KTK>
-    </PropertyGroup>
-    
-    <PropertyGroup>
-        <Enable_KTK>true</Enable_KTK>
-        <DefineConstants>$(DefineConstants);Enable_KTK</DefineConstants>
     </PropertyGroup>
 
     <ItemGroup>
-        <Content Include="SalanthTweaks.json" />
+        <Content Include="SalanthTweaks.json"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Injectio" Version="4.1.0" />
-      <PackageReference Include="JetBrains.Annotations" Version="2025.1.0-eap1" />
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.2" />
-      <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.2" />
+        <PackageReference Include="Injectio" Version="4.1.0"/>
+        <PackageReference Include="JetBrains.Annotations" Version="2025.1.0-eap1"/>
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.2"/>
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.2"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\FFXIVClientStructs\InteropGenerator\InteropGenerator.csproj" />
-      <ProjectReference Include="..\..\KamiToolKit\KamiToolKit.csproj" Condition="'$(Enable_KTK)'=='true'"/>
-      <ProjectReference Include="..\..\SalanthTweaks.Generators\SalanthTweaks.Generators\SalanthTweaks.Generators.csproj"  OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
+        <ProjectReference Include="..\..\FFXIVClientStructs\InteropGenerator\InteropGenerator.csproj"/>
+        <ProjectReference Include="..\..\KamiToolKit\KamiToolKit.csproj"/>
+        <ProjectReference Include="..\..\SalanthTweaks.Generators\SalanthTweaks.Generators\SalanthTweaks.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
     </ItemGroup>
 
     <ItemGroup Condition="!Exists('$(ProjectDir)..\..\FFXIVClientStructs')">
-        <Reference Include="InteropGenerator.Runtime" Private="false" />
-        <Reference Include="FFXIVClientStructs" Private="false" />
+        <Reference Include="InteropGenerator.Runtime" Private="false"/>
+        <Reference Include="FFXIVClientStructs" Private="false"/>
     </ItemGroup>
 
     <PropertyGroup Condition="Exists('$(ProjectDir)..\..\FFXIVClientStructs')">
@@ -45,35 +39,21 @@
     </PropertyGroup>
 
     <ItemGroup Condition="Exists('$(ProjectDir)..\..\FFXIVClientStructs')">
-        <CompilerVisibleProperty Include="InteropGenerator_InteropNamespace" />
-        <ProjectReference Include="..\..\FFXIVClientStructs\InteropGenerator\InteropGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-        <ProjectReference Include="..\..\FFXIVClientStructs\FFXIVClientStructs\FFXIVClientStructs.csproj" Private="True" />
-        <ProjectReference Include="..\..\FFXIVClientStructs\InteropGenerator.Runtime\InteropGenerator.Runtime.csproj" Private="True" />
+        <CompilerVisibleProperty Include="InteropGenerator_InteropNamespace"/>
+        <ProjectReference Include="..\..\FFXIVClientStructs\InteropGenerator\InteropGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
+        <ProjectReference Include="..\..\FFXIVClientStructs\FFXIVClientStructs\FFXIVClientStructs.csproj" Private="True"/>
+        <ProjectReference Include="..\..\FFXIVClientStructs\InteropGenerator.Runtime\InteropGenerator.Runtime.csproj" Private="True"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="Tweaks\FateWindow.FateAddon.cs">
-        <DependentUpon>FateWindow.cs</DependentUpon>
-      </Compile>
-      <Compile Update="Tweaks\HideMapInCombat.Config.cs">
-        <DependentUpon>HideMapInCombat.cs</DependentUpon>
-      </Compile> 
-      <Compile Update="Tweaks\FateWindow.FateEntryNode.cs">
-        <DependentUpon>FateWindow.cs</DependentUpon>
-      </Compile>
-    </ItemGroup>
-
-    <ItemGroup Condition="'$(Enable_KTK)'!='true'">
-        <ProjectReference Remove="..\..\KamiToolKit\KamiToolKit.csproj"/>  
-        <Compile Remove="Tweaks\FateWindow.cs"/>
-        <Compile Remove="Tweaks\FateList.cs"/>
-        <Compile Remove="Tweaks\FateWindow.FateAddon.cs"/>
-        <Compile Remove="Tweaks\FateWindow.FateEntryNode.cs"/>
-        <Compile Remove="Tweaks\PhantomJobHighlight.cs"/>
-        <None Include="Tweaks\FateWindow.cs"/>
-        <None Include="Tweaks\FateList.cs"/>
-        <None Include="Tweaks\FateWindow.FateAddon.cs"/>
-        <None Include="Tweaks\FateWindow.FateEntryNode.cs"/>
-        <None Include="Tweaks\PhantomJobHighlight.cs"/>
+        <Compile Update="Tweaks\FateWindow.FateAddon.cs">
+            <DependentUpon>FateWindow.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Tweaks\HideMapInCombat.Config.cs">
+            <DependentUpon>HideMapInCombat.cs</DependentUpon>
+        </Compile>
+        <Compile Update="Tweaks\FateWindow.FateEntryNode.cs">
+            <DependentUpon>FateWindow.cs</DependentUpon>
+        </Compile>
     </ItemGroup>
 </Project>

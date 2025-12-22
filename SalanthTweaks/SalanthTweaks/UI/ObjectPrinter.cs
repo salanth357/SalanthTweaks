@@ -29,7 +29,7 @@ public static class ObjectPrinter
 
             ImGui.Text(val);
         }
-        
+
         var props = typ.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
         foreach (var prop in props)
         {

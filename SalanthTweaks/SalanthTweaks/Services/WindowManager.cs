@@ -7,7 +7,6 @@ namespace SalanthTweaks.Services;
 [RegisterSingleton]
 public class WindowManager : IDisposable
 {
-
     private readonly WindowSystem windowSystem;
     private readonly IDalamudPluginInterface pluginInterface;
 
@@ -19,7 +18,7 @@ public class WindowManager : IDisposable
     }
 
     public void AddWindow(Window window) => windowSystem.AddWindow(window);
-    
+
     public void RemoveWindow(Window window) => windowSystem.RemoveWindow(window);
 
     public void Dispose()

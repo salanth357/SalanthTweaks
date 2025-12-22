@@ -32,6 +32,7 @@ public static class ItemHelpers
 
     public static bool IsEventItem(uint itemId)
     {
-        return itemId >= 2_000_000 && itemId - 2_000_000 < (EventItemRowCount ??= Service.Get<IDataManager>().Excel.GetSheet<EventItem>().Count);
+        return itemId >= 2_000_000 && itemId - 2_000_000 <
+               (EventItemRowCount ??= Service.Get<IDataManager>().Excel.GetSheet<EventItem>().Count);
     }
 }
