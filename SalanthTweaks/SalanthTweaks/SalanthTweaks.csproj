@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Dalamud.NET.Sdk/12.0.2">
+<Project Sdk="Dalamud.NET.Sdk/14.0.1">
     <PropertyGroup>
-        <Version>1.1.1</Version>
+        <Version>1.2.0</Version>
         <Description>Some kind of mistake, I'm sure</Description>
         <PackageProjectUrl>https://github.com/salanth357/SalanthTweaks</PackageProjectUrl>
         <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
@@ -64,14 +64,16 @@
     </ItemGroup>
 
     <ItemGroup Condition="'$(Enable_KTK)'!='true'">
-      <ProjectReference Remove="..\..\KamiToolKit\KamiToolKit.csproj"/>  
-      <Compile Remove="Tweaks\FateWindow.cs"/>
-      <Compile Remove="Tweaks\FateList.cs"/>
-      <Compile Remove="Tweaks\FateWindow.FateAddon.cs"/>
-      <Compile Remove="Tweaks\FateWindow.FateEntryNode.cs"/>
-      <None Include="Tweaks\FateWindow.cs"/>
-      <None Include="Tweaks\FateList.cs"/>
-      <None Include="Tweaks\FateWindow.FateAddon.cs"/>
-      <None Include="Tweaks\FateWindow.FateEntryNode.cs"/>
+        <ProjectReference Remove="..\..\KamiToolKit\KamiToolKit.csproj"/>  
+        <Compile Remove="Tweaks\FateWindow.cs"/>
+        <Compile Remove="Tweaks\FateList.cs"/>
+        <Compile Remove="Tweaks\FateWindow.FateAddon.cs"/>
+        <Compile Remove="Tweaks\FateWindow.FateEntryNode.cs"/>
+        <Compile Remove="Tweaks\PhantomJobHighlight.cs"/>
+        <None Include="Tweaks\FateWindow.cs"/>
+        <None Include="Tweaks\FateList.cs"/>
+        <None Include="Tweaks\FateWindow.FateAddon.cs"/>
+        <None Include="Tweaks\FateWindow.FateEntryNode.cs"/>
+        <None Include="Tweaks\PhantomJobHighlight.cs"/>
     </ItemGroup>
 </Project>

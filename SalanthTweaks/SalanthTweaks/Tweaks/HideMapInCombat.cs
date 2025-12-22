@@ -9,7 +9,6 @@ using SalanthTweaks.Interfaces;
 
 namespace SalanthTweaks.Tweaks;
 
-
 [RegisterSingleton<ITweak>(Duplicate = DuplicateStrategy.Append)]
 public partial class HideMapInCombat(IFramework Framework, IClientState ClientState) : ITweak
 {
@@ -24,9 +23,7 @@ public partial class HideMapInCombat(IFramework Framework, IClientState ClientSt
         LoadConfig();
     }
 
-    public void Dispose()
-    {
-    }
+    public void Dispose() { }
 
 
     public void OnEnable()
@@ -48,7 +45,8 @@ public partial class HideMapInCombat(IFramework Framework, IClientState ClientSt
 
     private bool ShouldHide()
     {
-        return (ClientState.LocalPlayer?.StatusFlags & StatusFlags.InCombat) != 0 && (IsInFate() || IsInDynamicEvent());
+        return (Service.Get<IObjectTable>().LocalPlayer?.StatusFlags & StatusFlags.InCombat) != 0 &&
+               (IsInFate() || IsInDynamicEvent());
     }
 
     private unsafe void OnFrameworkUpdate(IFramework _)

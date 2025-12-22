@@ -4,5 +4,7 @@
   "Punchline": "My weird random tweaks",
   "Description": "A description that shows up in /xlplugins. List any major slash-command(s).",
   "ApplicableVersion": "any",
-  "Tags": []
+  "Tags": [],
+  "LoadRequiredState": 2,
+  "LoadSync": true
 }

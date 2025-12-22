@@ -12,7 +12,6 @@ namespace SalanthTweaks.Tweaks;
 [RegisterSingleton<ITweak>(Duplicate = DuplicateStrategy.Append)]
 public class MainScenarioAutoHide : ITweak
 {
-
     public string DisplayName => "Main Scenario Auto Hide";
     public TweakStatus Status { get; set; }
     public void OnInitialize() { }
@@ -33,10 +32,11 @@ public class MainScenarioAutoHide : ITweak
 
     private bool display;
 
-    private unsafe void UpdateAddon() => UpdateAddon((AtkUnitBase*)Service.Get<IGameGui>().GetAddonByName("ScenarioTree"));
+    private unsafe void UpdateAddon() =>
+        UpdateAddon((AtkUnitBase*)Service.Get<IGameGui>().GetAddonByName("ScenarioTree").Address);
 
     [AddonPostRefresh("ScenarioTree")]
-    public unsafe void UpdateAddon(AddonEvent evt, AddonArgs args) => UpdateAddon((AtkUnitBase*)args.Addon);
+    public unsafe void UpdateAddon(AddonEvent evt, AddonArgs args) => UpdateAddon((AtkUnitBase*)args.Addon.Address);
 
     public unsafe void UpdateAddon(AtkUnitBase* addon)
     {
@@ -48,11 +48,11 @@ public class MainScenarioAutoHide : ITweak
         display = (ast != null && ast->Data != null && ast->Data->CurrentScenarioQuest != 0) ||
                   (jobQuestNode != null && jobQuestNode->IsVisible());
     }
-    
-    public unsafe void Redraw() => Redraw((AtkUnitBase*)Service.Get<IGameGui>().GetAddonByName("ScenarioTree"));
+
+    public unsafe void Redraw() => Redraw((AtkUnitBase*)Service.Get<IGameGui>().GetAddonByName("ScenarioTree").Address);
 
     [AddonPreDraw("ScenarioTree")]
-    public unsafe void Redraw(AddonEvent evt, AddonArgs args) => Redraw((AtkUnitBase*)args.Addon);
+    public unsafe void Redraw(AddonEvent evt, AddonArgs args) => Redraw((AtkUnitBase*)args.Addon.Address);
 
     public unsafe void Redraw(AtkUnitBase* addon)
     {

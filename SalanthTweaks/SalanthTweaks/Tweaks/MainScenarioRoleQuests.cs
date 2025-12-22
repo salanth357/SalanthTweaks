@@ -22,7 +22,6 @@ namespace SalanthTweaks.Tweaks;
 [RegisterSingleton<ITweak>(Duplicate = DuplicateStrategy.Append)]
 public class MainScenarioRoleQuests(ILogger<MainScenarioRoleQuests> Log) : ITweak
 {
-
     private record QuestDetail
     {
         internal ushort Id { get; init; }
@@ -50,9 +49,8 @@ public class MainScenarioRoleQuests(ILogger<MainScenarioRoleQuests> Log) : ITwea
     public string DisplayName => "Main Scenario UI Show Role Quests";
     public TweakStatus Status { get; set; } = TweakStatus.Uninitialized;
 
-    public void OnInitialize()
-    { }
-    
+    public void OnInitialize() { }
+
     public void OnEnable() { }
 
     public void OnDisable() { }
@@ -146,7 +144,7 @@ public class MainScenarioRoleQuests(ILogger<MainScenarioRoleQuests> Log) : ITwea
     {
         var args = (AddonRefreshArgs)baseArgs;
         Log.LogInformation("prerefresh {valCount}", args.AtkValueCount);
-        foreach (var atkValue in args.AtkValueSpan)
+        foreach (var atkValue in args.AtkValueEnumerable)
         {
             Log.LogInformation("{x}", atkValue.ToString());
         }

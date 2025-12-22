@@ -1,14 +1,13 @@
 ﻿using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit;
 using KamiToolKit.Classes;
-using KamiToolKit.Classes.TimelineBuilding;
+using KamiToolKit.Classes.Timelines;
 using KamiToolKit.Nodes;
 
 namespace SalanthTweaks.Tweaks;
 
 public class FateList : ComponentNode<AtkComponentBase, AtkUldComponentDataBase>
-{ 
+{
     public CollisionNode Root => CollisionNode;
 
     public readonly ResNode ContainerNode = new()
@@ -26,11 +25,13 @@ public class FateList : ComponentNode<AtkComponentBase, AtkUldComponentDataBase>
     {
         SetInternalComponentType(ComponentType.Base);
 
-        Service.Get<NativeController>().AttachNode(ContainerNode, this, NodePosition.AfterAllSiblings);
+        ContainerNode.AttachNode(this);
         BuildTimelines();
         InitializeComponentEvents();
     }
-    private void BuildTimelines() {
+
+    private void BuildTimelines()
+    {
         AddTimeline(new TimelineBuilder()
                     .BeginFrameSet(1, 29)
                     .AddLabel(1, 17, AtkTimelineJumpBehavior.Start, 0)
@@ -44,4 +45,3 @@ public class FateList : ComponentNode<AtkComponentBase, AtkUldComponentDataBase>
         );
     }
 }
-

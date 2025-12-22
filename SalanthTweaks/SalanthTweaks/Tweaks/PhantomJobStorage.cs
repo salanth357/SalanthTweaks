@@ -4,7 +4,7 @@ using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game.InstanceContent;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using ImGuiNET;
+using Dalamud.Bindings.ImGui;
 using SalanthTweaks.Attributes;
 using SalanthTweaks.Enums;
 using SalanthTweaks.Interfaces;
@@ -14,9 +14,7 @@ namespace SalanthTweaks.Tweaks;
 [RegisterSingleton<ITweak>(Duplicate = DuplicateStrategy.Append)]
 public class PhantomJobStorage : ITweak
 {
-    public void Dispose()
-    {
-    }
+    public void Dispose() { }
 
     public string DisplayName => "Phantom Job Storage";
 
@@ -30,6 +28,7 @@ public class PhantomJobStorage : ITweak
             ImGui.AlignTextToFramePadding();
             ImGui.Text("/phjstore -");
         }
+
         ImGui.SameLine();
         ImGui.AlignTextToFramePadding();
         ImGui.Text("stores the current phantom job");
@@ -41,26 +40,21 @@ public class PhantomJobStorage : ITweak
             ImGui.AlignTextToFramePadding();
             ImGui.Text("/phjload -");
         }
+
         ImGui.SameLine();
         ImGui.AlignTextToFramePadding();
         ImGui.Text("loads the previously stored phantom job");
-
     }
 
     public TweakStatus Status { get; set; }
-    public void OnInitialize()
-    {
-    }
+    public void OnInitialize() { }
 
-    public void OnEnable()
-    {
-    }
+    public void OnEnable() { }
 
-    public void OnDisable()
-    {
-    }
+    public void OnDisable() { }
 
     private byte currentJob = 0xFF;
+
     [Command("/phjstore", "store current phantom job", AutoEnable: true)]
     public unsafe void OnStore(string command, string args)
     {

@@ -1,4 +1,5 @@
-﻿using FFXIVClientStructs.FFXIV.Client.System.Input;
+﻿using FFXIVClientStructs.FFXIV.Client.Game.WKS;
+using FFXIVClientStructs.FFXIV.Client.System.Input;
 using SalanthTweaks.Enums;
 using SalanthTweaks.Interfaces;
 
@@ -21,12 +22,8 @@ public class FailTweak : ITweak
         throw new NotImplementedException();
     }
 
-    public void OnEnable()
-    {
-    }
+    public void OnEnable() { }
 
-    public void OnDisable()
-    {
-    }
+    public void OnDisable() { }
 }
 #endif

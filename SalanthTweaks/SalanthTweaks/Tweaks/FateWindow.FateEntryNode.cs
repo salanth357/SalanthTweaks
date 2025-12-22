@@ -20,8 +20,8 @@ public partial class FateWindow
 
         public string Name
         {
-            get => LabelNode.Text.TextValue;
-            set => LabelNode.Text = value;
+            get => LabelNode.String;
+            set => LabelNode.String = value;
         }
 
         private string state = "";
@@ -72,7 +72,7 @@ public partial class FateWindow
 
         private void UpdateTimerNodeText()
         {
-            timerNode.Text = $"{state.FirstOrDefault()} {TimeRemaining}";
+            timerNode.String = $"{state.FirstOrDefault()} {TimeRemaining}";
         }
 
         public override float Width
@@ -93,7 +93,7 @@ public partial class FateWindow
         private IconImageNode iconNode;
 
         private ResNode progressResNode;
-        private BasicProgressBarNode progressBarNode;
+        private ProgressBarCastNode progressBarNode;
         private TextNode timerNode;
 
         public FateEntryNode()
@@ -114,13 +114,12 @@ public partial class FateWindow
                 IsVisible = true,
                 TextureSize = new Vector2(20, 20)
             };
-            
+
             // Customize the existing label node to match what we want
             LabelNode.FontSize = 14;
             LabelNode.LineSpacing = 16;
             LabelNode.AlignmentType = AlignmentType.Left;
-            LabelNode.TextFlags = TextFlags.MultiLine | TextFlags.WordWrap;
-            LabelNode.TextFlags2 = TextFlags2.Ellipsis;
+            LabelNode.TextFlags = TextFlags.MultiLine | TextFlags.WordWrap | TextFlags.Ellipsis;
             LabelNode.Position = new Vector2(32, 4);
             LabelNode.Size = new Vector2(170, 32);
             LabelNode.AddFlags(NodeFlags.Clip);
@@ -138,23 +137,21 @@ public partial class FateWindow
                 Size = new Vector2(74, 14),
                 FontSize = 12,
                 FontType = FontType.MiedingerMed,
-                AlignmentType = AlignmentType.Left  
+                AlignmentType = AlignmentType.Left
             };
             timerNode.AddFlags(NodeFlags.HasCollision);
-            progressBarNode = new BasicProgressBarNode
+            progressBarNode = new ProgressBarCastNode
             {
                 NodeId = MakeNodeId(5),
                 IsVisible = true,
                 Position = new Vector2(0, Height - 8 - 6),
                 Size = new Vector2(74, 8),
                 Color = ColorHelper.GetColor(2),
-                EventFlagsSet = true,
             };
-            var nc = Service.Get<NativeController>();
-            nc.AttachNode(iconNode, this, NodePosition.AfterAllSiblings);
-            nc.AttachNode(progressBarNode, progressResNode);
-            nc.AttachNode(timerNode, progressResNode);
-            nc.AttachNode(progressResNode, this, NodePosition.AfterAllSiblings);
+            iconNode.AttachNode(this);
+            progressResNode.AttachNode(progressResNode);
+            timerNode.AttachNode(progressResNode);
+            progressResNode.AttachNode(this);
 
             OnClick += Click;
         }
@@ -165,7 +162,7 @@ public partial class FateWindow
             LabelNode.Width = progressResNode.X - LabelNode.X - 4;
         }
 
-        protected override void Dispose(bool disposing)
+        protected override void Dispose(bool disposing, bool isNativeDestructor)
         {
             if (disposing)
             {
@@ -174,7 +171,7 @@ public partial class FateWindow
                 timerNode.Dispose();
             }
 
-            base.Dispose(disposing);
+            base.Dispose(disposing, isNativeDestructor);
         }
 
         private unsafe void Click()
@@ -194,7 +191,7 @@ public partial class FateWindow
                 var clientState = Service.Get<IClientState>();
                 AgentMap.Instance()->SetFlagMapMarker(clientState.TerritoryType, clientState.MapId, MapLink, 0);
                 AgentMap.Instance()->OpenMap(clientState.MapId);
-                Service.Get<IFramework>().Run(() => AgentMap.Instance()->IsFlagMarkerSet = false);
+                Service.Get<IFramework>().Run(() => AgentMap.Instance()->FlagMarkerCount = 0);
                 AgentMap.Instance()->FocusAddon();
             }
         }

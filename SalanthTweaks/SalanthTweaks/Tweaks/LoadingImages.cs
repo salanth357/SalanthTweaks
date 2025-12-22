@@ -5,6 +5,7 @@ using System.Linq;
 using Lumina.Excel;
 using Lumina.Excel.Sheets;
 using Dalamud.Plugin.Services;
+using FFXIVClientStructs.FFXIV.Client.UI;
 using Microsoft.Extensions.Logging;
 using SalanthTweaks.Attributes;
 using SalanthTweaks.Enums;
@@ -39,7 +40,7 @@ public unsafe class LoadingImages(ILogger<LoadingImages> Log) : ITweak
 
     public void OnDisable()
     {
-        var ub = (AtkUnitBase*)Service.Get<IGameGui>().GetAddonByName("_LocationTitle");
+        var ub = (AtkUnitBase*)Service.Get<IGameGui>().GetAddonByName("_LocationTitle").Address;
         if (Service.Get<UiHelper>().IsAddonReady(ub))
         {
             var nd = ub->GetImageNodeById(ImageNodeId);
@@ -49,21 +50,25 @@ public unsafe class LoadingImages(ILogger<LoadingImages> Log) : ITweak
             }
         }
     }
-      
 
-    private AtkTextureResource* GetNodeResource(AtkImageNode *node) {
+
+    private AtkTextureResource* GetNodeResource(AtkImageNode* node)
+    {
         try
         {
             if (node == null) return null;
             if (node->PartsList == null) return null;
             if (node->PartId >= node->PartsList->PartCount)
             {
-                Log.LogError("Node has partID {partID} larger than partsList {partCount}", node->PartId, node->PartsList->PartCount);
+                Log.LogError("Node has partID {partID} larger than partsList {partCount}", node->PartId,
+                             node->PartsList->PartCount);
                 return null;
             }
+
             var asset = node->PartsList->Parts[node->PartId].UldAsset;
             return asset == null ? null : asset->AtkTexture.Resource;
-        } catch (Exception e)
+        }
+        catch (Exception e)
         {
             Log.LogError(e, "Unable to get node Resource");
             return null;
@@ -91,7 +96,7 @@ public unsafe class LoadingImages(ILogger<LoadingImages> Log) : ITweak
         {
             var resource = GetNodeResource(node);
             if (resource == null || resource->TexFileResourceHandle == null) return "";
-            
+
             var name = resource->TexFileResourceHandle->ResourceHandle.FileName;
             return name.BufferPtr == null ? "" : name.ToString();
         }
@@ -108,7 +113,7 @@ public unsafe class LoadingImages(ILogger<LoadingImages> Log) : ITweak
     {
         try
         {
-            var addon = (AtkUnitBase*)args.Addon;
+            var addon = (AtkUnitBase*)args.Addon.Address;
 
             var iconId = GetNodeIconId(Service.Get<UiHelper>().GetNodeById<AtkImageNode>(addon, 4));
             if (iconId == -1) return;
@@ -116,9 +121,11 @@ public unsafe class LoadingImages(ILogger<LoadingImages> Log) : ITweak
             if (terriZone.RowId == 0) return;
 
             // Don't display these for instance content
-            if (Service.Get<IDataManager>().Excel.GetSheet<ContentFinderCondition>().Any(x => x.ContentLinkType == 1 && x.TerritoryType.RowId == terriZone.RowId)) return;
+            if (Service.Get<IDataManager>().Excel.GetSheet<ContentFinderCondition>()
+                       .Any(x => x.ContentLinkType == 1 && x.TerritoryType.RowId == terriZone.RowId)) return;
 
-            var loadingImage = Service.Get<IDataManager>().Excel.GetSheet<LoadingImage>().FirstOrDefault(x => x.RowId == terriZone.LoadingImage.RowId);
+            var loadingImage = Service.Get<IDataManager>().Excel.GetSheet<LoadingImage>()
+                                      .FirstOrDefault(x => x.RowId == terriZone.LoadingImage.RowId);
             if (loadingImage.RowId == 0) return;
 
             var imageNode = GetImageNode(addon);
@@ -139,6 +146,7 @@ public unsafe class LoadingImages(ILogger<LoadingImages> Log) : ITweak
     }
 
     private const int ImageNodeId = 93;
+
     private AtkImageNode* GetImageNode(AtkUnitBase* parent)
     {
         var nd = Service.Get<UiHelper>().GetNodeById<AtkImageNode>(parent, ImageNodeId);
@@ -149,9 +157,11 @@ public unsafe class LoadingImages(ILogger<LoadingImages> Log) : ITweak
             {
                 return nd;
             }
-            nd->NodeFlags = NodeFlags.AnchorLeft | NodeFlags.AnchorTop | NodeFlags.Visible | NodeFlags.Enabled | NodeFlags.EmitsEvents;
+
+            nd->NodeFlags = NodeFlags.AnchorLeft | NodeFlags.AnchorTop | NodeFlags.Visible | NodeFlags.Enabled |
+                            NodeFlags.EmitsEvents;
             nd->WrapMode = 1;
-            nd->Flags = (byte)ImageNodeFlags.AutoFit;
+            nd->Flags = ImageNodeFlags.AutoFit;
             nd->ToggleVisibility(true);
             nd->SetWidth(Width);
             nd->SetHeight(Height);
@@ -159,8 +169,10 @@ public unsafe class LoadingImages(ILogger<LoadingImages> Log) : ITweak
             nd->SetPositionFloat(X, Y);
             nd->SetPriority(0);
 
-            Service.Get<UiHelper>().LinkNodeAfterTargetNode(nd, parent, Service.Get<UiHelper>().GetNodeById<AtkResNode>(parent, 6));
+            Service.Get<UiHelper>()
+                   .LinkNodeAfterTargetNode(nd, parent, Service.Get<UiHelper>().GetNodeById<AtkResNode>(parent, 6));
         }
+
         return nd;
     }
 

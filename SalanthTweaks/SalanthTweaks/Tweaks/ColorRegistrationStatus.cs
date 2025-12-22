@@ -25,7 +25,11 @@ public class ColorRegistrationStatus(ISeStringEvaluator stringEvaluator) : ITwea
     private unsafe Utf8String* unobtainedString;
     private unsafe Utf8String* macroUnobtainedString;
 
-    public unsafe void OnInitialize()
+    public unsafe void OnInitialize() { }
+
+    public unsafe void Dispose() { }
+
+    public unsafe void OnEnable()
     {
         var sb = new SeStringBuilder();
 
@@ -41,7 +45,7 @@ public class ColorRegistrationStatus(ISeStringEvaluator stringEvaluator) : ITwea
         macroUnobtainedString = Utf8String.FromSequence(sb.GetViewAsSpan());
     }
 
-    public unsafe void Dispose()
+    public unsafe void OnDisable()
     {
         obtainedString->Dtor(true);
         macroObtainedString->Dtor(true);
@@ -49,17 +53,16 @@ public class ColorRegistrationStatus(ISeStringEvaluator stringEvaluator) : ITwea
         macroUnobtainedString->Dtor(true);
     }
 
-    public void OnEnable() { }
-
-    public void OnDisable() { }
-
-    private unsafe delegate Utf8String* ItemFormatDelegate(AgentItemDetail* a1, Utf8String* a2, InventoryItem* a3, nint a4, uint a5, nint a6, uint a7, nint a8, byte a9);
+    private unsafe delegate Utf8String* ItemFormatDelegate(
+        AgentItemDetail* a1, Utf8String* a2, InventoryItem* a3, nint a4, uint a5, nint a6, uint a7, nint a8, byte a9);
 
     [AutoHook]
-    [Signature("E8 ?? ?? ?? ?? 48 8B C8 E8 ?? ?? ?? ?? 49 8D 4F 08", DetourName = nameof(Detour))]
+    [Signature("E8 ?? ?? ?? ?? 48 8B C8 E8 ?? ?? ?? ?? 48 8D 4D 08", DetourName = nameof(Detour))]
     private Hook<ItemFormatDelegate> hookItemFormat = null!;
 
-    public unsafe Utf8String* Detour(AgentItemDetail* hookThis, Utf8String* outString, InventoryItem* invItem, nint itemSheetRow, uint itemId, nint a6, uint a7, nint a8, byte a9)
+    public unsafe Utf8String* Detour(
+        AgentItemDetail* hookThis, Utf8String* outString, InventoryItem* invItem, nint itemSheetRow, uint itemId,
+        nint a6, uint a7, nint a8, byte a9)
     {
         var newStr = hookItemFormat.Original(hookThis, outString, invItem, itemSheetRow, itemId, a6, a7, a8, a9);
         if (newStr != null)
@@ -67,6 +70,7 @@ public class ColorRegistrationStatus(ISeStringEvaluator stringEvaluator) : ITwea
             Replace(obtainedString, macroObtainedString);
             Replace(unobtainedString, macroUnobtainedString);
         }
+
         return newStr;
 
         void Replace(Utf8String* needle, Utf8String* replacement)
@@ -83,4 +87,3 @@ public class ColorRegistrationStatus(ISeStringEvaluator stringEvaluator) : ITwea
         }
     }
 }
-

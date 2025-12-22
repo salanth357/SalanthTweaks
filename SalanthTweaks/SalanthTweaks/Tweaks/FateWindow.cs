@@ -1,8 +1,8 @@
 ﻿using System.Numerics;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Game.ClientState.Keys;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.UI;
-using ImGuiNET;
 using KamiToolKit;
 using SalanthTweaks.Attributes;
 using SalanthTweaks.Config;
@@ -18,33 +18,25 @@ public partial class FateWindow : ITweak
     public string DisplayName => "Fate Window";
     public TweakStatus Status { get; set; }
 
-    public void Dispose()   
+    public void Dispose()
     {
         Addon?.Dispose();
     }
 
-    public void OnInitialize()
-    {
-
-    }
+    public void OnInitialize() { }
 
     public void OnEnable()
     {
         Service.Get<IFramework>().Update += OnFrameworkUpdate;
-        var nc = Service.Get<NativeController>(); 
 
         Addon ??= new FateAddon
         {
             InternalName = "STFateWindow",
             Title = "Fates",
-            Size = new Vector2(305.0f+24, 415.0f),
-            NativeController = nc,
+            Size = new Vector2(305.0f + 24, 415.0f),
             OpenWindowSoundEffectId = 23,
             OnClose = () => UIGlobals.PlaySoundEffect(24)
         };
-        #if DEBUG
-        Addon.Toggle();
-        #endif
     }
 
     private void OnFrameworkUpdate(IFramework framework)
@@ -64,15 +56,15 @@ public partial class FateWindow : ITweak
 
     public void OnDisable()
     {
-        Addon?.Dispose(); 
+        Addon?.Dispose();
     }
-    
+
     [Command("/fates", "View current fates", AutoEnable: true)]
     public void OnCommand(string command, string args)
     {
         Addon?.Toggle();
     }
-    
+
     public class FateWindowConfig : TweakConfig
     {
         private const int CurrentVersion = 1;
@@ -93,7 +85,7 @@ public partial class FateWindow : ITweak
         private NineGridNode hoveredNineGridNode;
         private NineGridNode selectedNineGridNode;
         private NodeBase contentNode;
-        
+
 
         public ListItemNode(NodeBase contentNode)
         {
@@ -130,7 +122,7 @@ public partial class FateWindow : ITweak
                 Position = Vector2.Zero,
                 Size = new Vector2(305, 24)
             };
- 
+
             var selectPart = new Part
             {
                 TextureCoordinates = new Vector2(0, 0),
@@ -163,28 +155,28 @@ public partial class FateWindow : ITweak
             nc.AttachNode(contentNode, this);
 
         }
-        
+
         public override void DrawConfig() {
             base.DrawConfig();
-                
+
             using (var progressBar = ImRaii.TreeNode("Coll")) {
                 if (progressBar) {
                     collisionNode.DrawConfig();
                 }
             }
-            
+
             using (var moduleName = ImRaii.TreeNode("Hov")) {
                 if (moduleName) {
                     hoveredNineGridNode.DrawConfig();
                 }
             }
-                
+
             using (var timeRemaining = ImRaii.TreeNode("Sel")) {
                 if (timeRemaining) {
                     selectedNineGridNode.DrawConfig();
                 }
             }
-                            
+
             using (var timeRemaining = ImRaii.TreeNode("Content")) {
                 if (timeRemaining) {
                     contentNode.DrawConfig();

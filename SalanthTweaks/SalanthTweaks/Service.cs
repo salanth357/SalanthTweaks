@@ -3,6 +3,7 @@ using Dalamud.Game;
 using Dalamud.Game.ClientState.Objects;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
+using KamiToolKit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SalanthTweaks.Logger;
@@ -43,6 +44,9 @@ public static class Service
     
     public static IServiceCollection AddDalamud(this IServiceCollection collection, IDalamudPluginInterface pluginInterface)
     {
+        #if Enable_KTK
+            KamiToolKitLibrary.Initialize(pluginInterface); 
+        #endif
         collection
             .AddSingleton(pluginInterface)
             .AddSingleton(DalamudServiceFactory<IAddonEventManager>)
@@ -65,7 +69,6 @@ public static class Service
             .AddSingleton(DalamudServiceFactory<IGameInteropProvider>)
             .AddSingleton(DalamudServiceFactory<IGameInventory>)
             .AddSingleton(DalamudServiceFactory<IGameLifecycle>)
-            .AddSingleton(DalamudServiceFactory<IGameNetwork>)
             .AddSingleton(DalamudServiceFactory<IGamepadState>)
             .AddSingleton(DalamudServiceFactory<IJobGauges>)
             .AddSingleton(DalamudServiceFactory<IKeyState>)
@@ -83,11 +86,9 @@ public static class Service
             .AddSingleton(DalamudServiceFactory<ITitleScreenMenu>)
             .AddSingleton(DalamudServiceFactory<IToastGui>)
             #if Enable_KTK
-            .AddSingleton(_ => new KamiToolKit.NativeController(pluginInterface))
+            .AddSingleton(_ => new KamiToolKit.Overlay.OverlayController())
             #endif
-#pragma warning disable SeStringEvaluator
             .AddSingleton(DalamudServiceFactory<ISeStringEvaluator>)
-#pragma warning restore SeStringEvaluator
             .AddLogging(builder =>
             {
                 builder.ClearProviders();

@@ -1,15 +1,14 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game.InstanceContent;
 using FFXIVClientStructs.FFXIV.Client.System.Memory;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using ImGuiNET;
-using KamiToolKit.Addon;
+using KamiToolKit;
 using KamiToolKit.Nodes;
-using KamiToolKit.System;
 using Microsoft.Extensions.Logging;
 using SalanthTweaks.UI;
 using Action = System.Action;
@@ -27,7 +26,7 @@ public partial class FateWindow
         private readonly Dictionary<ushort, FateHolder> fates = [];
         private readonly Dictionary<ushort, FateHolder> dynamicEvents = [];
 
-        private ScrollingAreaNode component = null!;
+        private ScrollingAreaNode<ResNode> component = null!;
         private unsafe AtkUnitBase* nativeAddon;
 
         private readonly unsafe ListPanel* listPanel = IMemorySpace.GetUISpace()->Create<ListPanel>();
@@ -37,29 +36,15 @@ public partial class FateWindow
             Service.Get<IClientState>().TerritoryChanged += _ => needsReset = true;
             nativeAddon = addon;
 
-            component = new ScrollingAreaNode
+            component = new ScrollingAreaNode<ResNode>
             {
                 NodeId = 99,
                 Position = ContentStartPosition,
                 Size = ContentSize,
                 IsVisible = true,
-                ContentHeight = ContentSize.Y
+                ContentHeight = ContentSize.Y,
             };
-            NativeController.AttachNode(component, this);
-
-            for (var i = 0; i < 5; i++)
-            {
-                var fh = new FateHolder
-                {
-                    IconId = 60501,
-                    Name = $"{i}"
-                };
-                fh.Node.Width = component.ContentNode.Width;
-
-                AddEntry(fh);
-            }
-            listPanel->UpdateLayout();
-            component.ContentHeight = listPanel->Height;
+            component.AttachNode(this);
 
             base.OnSetup(addon);
         }
@@ -69,7 +54,7 @@ public partial class FateWindow
             closed = false;
             needsReset = true;
             base.OnShow(addon);
-        } 
+        }
 
         protected override unsafe void OnUpdate(AtkUnitBase* addon)
         {
@@ -105,17 +90,19 @@ public partial class FateWindow
 
         private unsafe void AddEntry(FateHolder fh)
         {
-            NativeController.AttachNode(fh, component.ContentNode);
+            fh.Node.AttachNode(component);
             if (fh.IsDynamicEvent)
                 listPanel->Entries.InsertCopy(0, fh);
             else
                 listPanel->Entries.AddCopy(fh);
         }
+
         private unsafe void RemoveEntry(FateHolder fh)
         {
             listPanel->Entries.Remove(fh);
-            NativeController.DetachNode(fh);
+            fh.Node.DetachNode();
         }
+
         private unsafe void UpdateFateList(AtkUnitBase* addon)
         {
             if (needsReset)
@@ -175,7 +162,7 @@ public partial class FateWindow
                         DynamicEventState.Battle => new TimeSpan(0, 0, (int)ev.SecondsLeft),
                         _ => TimeSpan.Zero
                     };
-                    
+
                     fh.Progress = ev.Progress / 100.0f;
                     fh.State = ev.State.ToString();
                     fh.TimeRemaining = $"{(int)duration.TotalMinutes:00}:{duration.Seconds:00}";
@@ -194,6 +181,7 @@ public partial class FateWindow
                         RemoveEntry(holder);
                         changed = true;
                     }
+
                     continue;
                 }
 

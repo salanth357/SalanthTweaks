@@ -13,26 +13,24 @@ namespace SalanthTweaks.Tweaks;
 public class AtkArrayEdit : ITweak
 {
     private IChatGui? chatGui;
+
     void IDisposable.Dispose()
     {
         GC.SuppressFinalize(this);
     }
-    
+
     public string DisplayName => "AtkArrayEdit";
     public TweakStatus Status { get; set; }
+
     public void OnInitialize()
     {
         chatGui = Service.Get<IChatGui>();
     }
 
-    public void OnEnable()
-    {
-    }
+    public void OnEnable() { }
 
-    public void OnDisable()
-    {
-    }
-    
+    public void OnDisable() { }
+
     [Command("/atk", "View and edit atk values", AutoEnable: true)]
     public unsafe void OnCommand(string command, string args)
     {
@@ -85,7 +83,8 @@ public class AtkArrayEdit : ITweak
             if (set)
             {
                 var useHex = parts[3].StartsWith("0x");
-                if (int.TryParse(parts[3], useHex ? NumberStyles.HexNumber : NumberStyles.None, CultureInfo.InvariantCulture, out var newValue))
+                if (int.TryParse(parts[3], useHex ? NumberStyles.HexNumber : NumberStyles.None,
+                                 CultureInfo.InvariantCulture, out var newValue))
                 {
                     message += $" -> {newValue}";
                     array->SetValue(arrayIndex, newValue);
@@ -105,8 +104,10 @@ public class AtkArrayEdit : ITweak
             {
                 chatGui?.PrintError("Array index is out of range");
             }
+
             var str = array->StringArray[arrayIndex];
-            message = $"{kind}{arrayNum}.{arrayIndex}: {(str == null ? "\u2400" : Utf8String.FromSequence(str)->ToString())}";
+            message =
+                $"{kind}{arrayNum}.{arrayIndex}: {(!str.HasValue ? "\u2400" : Utf8String.FromSequence((byte*)str)->ToString())}";
 
             if (set)
             {
@@ -120,6 +121,7 @@ public class AtkArrayEdit : ITweak
                 }
             }
         }
+
         chatGui?.Print(message, "AtkEdit");
     }
 }

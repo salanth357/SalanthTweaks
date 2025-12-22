@@ -19,7 +19,8 @@ public class WindowManager : IDisposable
     }
 
     public void AddWindow(Window window) => windowSystem.AddWindow(window);
-
+    
+    public void RemoveWindow(Window window) => windowSystem.RemoveWindow(window);
 
     public void Dispose()
     {

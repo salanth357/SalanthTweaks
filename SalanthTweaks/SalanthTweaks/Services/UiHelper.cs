@@ -72,7 +72,7 @@ public unsafe class UiHelper(ILogger<UiHelper> Log) : IDisposable
         return imageNode;
     }
     
-    public bool TryMakeImageNode(uint id, NodeFlags resNodeFlags, uint resNodeDrawFlags, byte wrapMode, byte imageNodeFlags, [NotNullWhen(true)] out AtkImageNode* imageNode)
+    public bool TryMakeImageNode(uint id, NodeFlags resNodeFlags, uint resNodeDrawFlags, byte wrapMode, ImageNodeFlags imageNodeFlags, [NotNullWhen(true)] out AtkImageNode* imageNode)
     {
         imageNode = AtkUldManager.CreateAtkImageNode();
 
@@ -165,6 +165,20 @@ public unsafe class UiHelper(ILogger<UiHelper> Log) : IDisposable
     }
     
     public void LinkNodeAfterTargetNode<T>(T* atkNode, AtkUnitBase* parent, AtkResNode* targetNode) where T : unmanaged {
+        var node = (AtkResNode*)atkNode;
+        var prev = targetNode->PrevSiblingNode;
+        node->ParentNode = targetNode->ParentNode;
+
+        targetNode->PrevSiblingNode = node;
+        prev->NextSiblingNode = node;
+
+        node->PrevSiblingNode = prev;
+        node->NextSiblingNode = targetNode;
+
+        parent->UldManager.UpdateDrawNodeList();
+    }
+    
+    public void LinkNodeAfterTargetNode<T>(T* atkNode, AtkComponentBase* parent, AtkResNode* targetNode) where T : unmanaged {
         var node = (AtkResNode*)atkNode;
         var prev = targetNode->PrevSiblingNode;
         node->ParentNode = targetNode->ParentNode;
