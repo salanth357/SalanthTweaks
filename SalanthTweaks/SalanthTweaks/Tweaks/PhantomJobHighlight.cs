@@ -3,6 +3,7 @@ using Dalamud.Game.Addon.Lifecycle;
 using Dalamud.Game.Addon.Lifecycle.AddonArgTypes;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using KamiToolKit.Nodes;
+using KamiToolKit.Premade.Node.Simple;
 using SalanthTweaks.Attributes;
 using SalanthTweaks.Enums;
 using SalanthTweaks.Interfaces;
@@ -49,9 +50,9 @@ public class PhantomJobHighlight : ITweak
         {
             foreach (var job in row.Jobs)
             {
-                if (job.JobId >= b.AtkValuesSpan[18].Int)
+                if (job.JobId >= b.AtkValuesSpan[26].Int)
                 {
-                    Plugin.Log.Info($"{job.JobId} >= {addon->Base.AtkValuesSpan[18].Int}");
+                    Plugin.Log.Info($"{job.JobId} >= {addon->Base.AtkValuesSpan[26].Int}");
                     continue;
                 }
 
@@ -61,7 +62,7 @@ public class PhantomJobHighlight : ITweak
                 Dalamud.Utility.Util.DumpMemory((IntPtr)val.AtkValues, 0x10);
                 var jobId = ((uint)val.AtkValues->Type & 0xFF00) >> 8;
                 Plugin.Log.Info($"typebyte {jobId:X}");
-                if (jobId is 1 or 3 or 6)
+                if (jobId is 1 or 3 or 6 or 15)
                 {
                     AddBox(job.Button);
                     Plugin.Log.Info("job proc");

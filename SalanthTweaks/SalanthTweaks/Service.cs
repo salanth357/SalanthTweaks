@@ -80,7 +80,7 @@ public static class Service
             .AddSingleton(DalamudServiceFactory<ITextureSubstitutionProvider>)
             .AddSingleton(DalamudServiceFactory<ITitleScreenMenu>)
             .AddSingleton(DalamudServiceFactory<IToastGui>)
-            .AddSingleton(_ => new KamiToolKit.Overlay.OverlayController())
+            // .AddSingleton(_ => new KamiToolKit.Controllers.)
             .AddSingleton(DalamudServiceFactory<ISeStringEvaluator>)
             .AddLogging(builder =>
             {

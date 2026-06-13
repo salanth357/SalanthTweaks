@@ -45,7 +45,7 @@ public class MainScenarioAutoHide : ITweak
         var ast = AgentScenarioTree.Instance();
         var jobQuestNode = addon->GetNodeById(7);
 
-        display = (ast != null && ast->Data != null && ast->Data->CurrentScenarioQuest != 0) ||
+        display = (ast != null && ast->Data != null && ast->Data->MainScenarioQuestIds[0] != 0) ||
                   (jobQuestNode != null && jobQuestNode->IsVisible());
     }
 

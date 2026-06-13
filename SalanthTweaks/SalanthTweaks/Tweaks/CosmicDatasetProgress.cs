@@ -11,6 +11,7 @@ using Dalamud.Hooking;
 using Dalamud.Interface.Utility.Raii;
 using Dalamud.Interface.Windowing;
 using Dalamud.Plugin.Services;
+using Dalamud.Utility;
 using Dalamud.Utility.Numerics;
 using Dalamud.Utility.Signatures;
 using FFXIVClientStructs.FFXIV.Client.Game.WKS;
@@ -20,33 +21,33 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using FFXIVClientStructs.Interop;
 using Lumina.Excel.Sheets;
 using Lumina.Text;
+using Lumina.Text.ReadOnly;
+using Newtonsoft.Json;
 using SalanthTweaks.Attributes;
 using SalanthTweaks.Enums;
 using SalanthTweaks.Interfaces;
 using SalanthTweaks.Services;
 using ClassJob = Lumina.Excel.Sheets.ClassJob;
-using WKSMissionReward = SalanthTweaks.CustomSheets.WKSMissionReward;
+// using WKSMissionReward = SalanthTweaks.CustomSheets.WKSMissionReward;
 
 namespace SalanthTweaks.Tweaks;
 
 [RegisterSingleton<ITweak>(Duplicate = DuplicateStrategy.Append)]
-public class CosmicDatasetProgress : ITweak
+public class CosmicDatasetProgress(IDataManager dataManager) : ITweak
 {
     public string DisplayName => "CosmicDatasetProgress";
     public TweakStatus Status { get; set; }
 
-    private readonly IDataManager DataManager;
-    private readonly ProgressWindow progressWindow;
     public void OnInitialize() { }
 
     public void Dispose()
     {
-        setIntDataHook.Dispose();
+        setIntDataHook?.Dispose();
         AgentWKSMissionReceiveEventHook.Dispose();
     }
 
     private const int JobCount = 11;
-    private const int TypeCount = 5;
+    private const int TypeCount = 6;
 
     private readonly Progress[,] ResearchProgress = new Progress[JobCount, TypeCount];
 
@@ -65,34 +66,20 @@ public class CosmicDatasetProgress : ITweak
         }
     }
 
-    public CosmicDatasetProgress(IDataManager manager)
-    {
-        DataManager = manager;
-        progressWindow = new ProgressWindow(this);
-    }
-
 
     public void OnEnable()
     {
         InitResearchProgress();
         needUpdate = true;
         Update();
-        Service.Get<WindowManager>().AddWindow(progressWindow);
         var fw = Service.Get<IFramework>();
         fw.Update += OnTick;
-        fw.RunOnFrameworkThread(() =>
-            {
-                var cs = Service.Get<IClientState>();
-                cs.TerritoryChanged += OnTerritoryChanged;
-                OnTerritoryChanged(Service.Get<IClientState>().TerritoryType);
-            }
-        );
     }
 
     [AutoHook]
     [Signature("48 89 5C 24 ?? 57 48 83 EC 20 48 8B D9 45 32 D2 48 8B 49 28 ",
                DetourName = nameof(AgentWKSMissionReceiveEventDetour))]
-    private Hook<AgentWKSMission.Delegates.ReceiveEvent> AgentWKSMissionReceiveEventHook = null;
+    private Hook<AgentWKSMission.Delegates.ReceiveEvent> AgentWKSMissionReceiveEventHook = null!;
 
     private unsafe AtkValue* AgentWKSMissionReceiveEventDetour(
         AgentWKSMission* thisPtr, AtkValue* returnValue, AtkValue* values, uint valueCount, ulong eventKind)
@@ -119,31 +106,16 @@ public class CosmicDatasetProgress : ITweak
 
     public void OnDisable()
     {
-        Service.Get<WindowManager>().RemoveWindow(progressWindow);
         Service.Get<IFramework>().Update -= OnTick;
-        Service.Get<IClientState>().TerritoryChanged -= OnTerritoryChanged;
         AgentWKSMissionReceiveEventHook?.Disable();
-    }
-
-    private void OnTerritoryChanged(ushort obj)
-    {
-        if (obj == 0) return;
-        // 60 is CE
-        var open = Service.Get<IDataManager>().Excel.GetSheet<TerritoryType>().GetRow(obj).TerritoryIntendedUse.RowId == 60;
-        if (open) Update();
-        progressWindow.IsOpen = open;
     }
 
     public void OnTick(IFramework framework)
     {
-        // unsafe
-        // {
-        //     var agent = AgentWKSMission.Instance();
-        //     if (agent != null) agent->SelectedTab = 0;
-        // }
         if (needUpdate) Update();
         CheckKeypress();
     }
+
 
     private unsafe void CheckKeypress()
     {
@@ -191,7 +163,7 @@ public class CosmicDatasetProgress : ITweak
         var research = mgr->ResearchModule;
         if (research == null) return;
         needUpdate = false;
-
+ 
         lock (ResearchProgress)
         {
             for (var job = 0; job < JobCount; job++)
@@ -254,59 +226,18 @@ public class CosmicDatasetProgress : ITweak
         }
     }
 
-    private class ProgressWindow : Window
-    {
-        public readonly CosmicDatasetProgress Tweak;
-
-        public ProgressWindow(CosmicDatasetProgress tweak) : base("Cosmic Progress###CosmicProgressOverlay",
-                                                                  ImGuiWindowFlags.NoDecoration)
-        {
-            Tweak = tweak;
-            Size = new Vector2(400, 0);
-        }
-
-        public override void Draw()
-        {
-            var progress = Tweak.GetCurrentJobProgress();
-            if (progress.Count == 0) return;
-            foreach (var prog in progress)
-                prog.Draw();
-            Size = Size.GetValueOrDefault().WithY(ImGui.GetCursorPosY());
-        }
-    }
-
-
-    private void LogEventArgs(string msg, Span<AtkValue> values)
-    {
-        var sb = new StringBuilder();
-        var i = 0;
-        foreach (var v in values)
-        {
-            sb.AppendLine($"{i++}: {v.ToString()}");
-        }
-
-        Service.Get<IPluginLog>().Information($"{msg}:\n{sb}");
-    }
-
-    [AddonPreSetup("WKSMission")]
-    public unsafe void WKSMissionPreSetup(AddonEvent ev, AddonArgs bargs)
-    {
-        var args = (AddonSetupArgs)bargs;
-        var atkValues = new Span<AtkValue>(args.AtkValues.ToPointer(), (int)args.AtkValueCount);
-        LogEventArgs("PreSetup", atkValues);
-    }
-
     // ReSharper disable once InconsistentNaming
     [AddonPreRefresh("WKSMission")]
     public unsafe void WKSMissionPreRefresh(AddonEvent ev, AddonArgs bargs)
     {
         var args = (AddonRefreshArgs)bargs;
         var atkValues = new Span<AtkValue>(args.AtkValues.ToPointer(), (int)args.AtkValueCount);
-        LogEventArgs("PreRefresh", atkValues);
-        var itemCount = atkValues[31];
+        
+        if (atkValues[0].Int != 1) return;
+        var itemCount = atkValues[32];
         const int itemSize = 6;
-        const int itemArrayBase = 32;
-        const int labelArrayBase = 800;
+        const int itemArrayBase = 33;
+        const int labelArrayBase = 801;
         var currentJobProgress = GetCurrentJobProgress();
 
         uint maxValue = 0;
@@ -333,29 +264,32 @@ public class CosmicDatasetProgress : ITweak
         foreach (var idx in indexes)
         {
             ref var labelValue = ref atkValues[labelArrayBase + (idx * 2)];
-            labelValue.SetManagedString(new SeStringBuilder().PushEdgeColorType(65).Append(labelValue.String)
-                                                             .PopEdgeColorType().GetViewAsSpan());
+            var str = new SeStringBuilder().PushEdgeColorType(65)
+                                       .Append(labelValue.String)
+                                       .PopEdgeColorType().GetViewAsSpan();
+            labelValue.SetManagedString(str);
             okayIndexes.Remove(idx);
         }
 
         foreach (var idx in okayIndexes)
         {
             ref var labelValue = ref atkValues[labelArrayBase + (idx * 2)];
-            labelValue.SetManagedString(new SeStringBuilder().PushEdgeColorType(34).Append(labelValue.String)
-                                                             .PopEdgeColorType().GetViewAsSpan());
+            var str = new SeStringBuilder().PushEdgeColorType(34)
+                                           .Append(labelValue.String)
+                                           .PopEdgeColorType().GetViewAsSpan();
+            labelValue.SetManagedString(str);
         }
     }
 
     public uint ValueForMission(uint missionId, List<Progress> currentJobProgress)
     {
-        var missionUnit = DataManager.Excel.GetSheet<WKSMissionUnit>().GetRow(missionId);
+        var missionUnit = dataManager.Excel.GetSheet<WKSMissionUnit>().GetRow(missionId);
         var rewardRowId = missionUnit.MissionReward.RowId;
-        var mission = DataManager.Excel.GetSheet<WKSMissionReward>().GetRow(rewardRowId);
+        var mission = dataManager.Excel.GetSheet<WKSMissionReward>().GetRow(rewardRowId);
         uint value = 0;
         for (var i = 0; i < 3; i++)
         {
             if (mission.TypeIndex[i] == 0) continue;
-            AtkUnitBase b;
             var prog = currentJobProgress[mission.TypeIndex[i] - 1];
             if (prog.Complete) continue;
             value += mission.ResearchReward[i];

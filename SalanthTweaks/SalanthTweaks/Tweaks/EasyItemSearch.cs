@@ -15,7 +15,10 @@ public class EasyItemSearch : ITweak
 
     public void OnInitialize() { }
 
-    public void Dispose() { }
+    public void Dispose()
+    {
+        hook?.Dispose();
+    }
 
     public void OnEnable() { }
 

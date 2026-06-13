@@ -31,7 +31,7 @@ public partial class FateWindow
 
         private readonly unsafe ListPanel* listPanel = IMemorySpace.GetUISpace()->Create<ListPanel>();
 
-        protected override unsafe void OnSetup(AtkUnitBase* addon)
+        protected override unsafe void OnSetup(AtkUnitBase* addon, Span<AtkValue> values)
         {
             Service.Get<IClientState>().TerritoryChanged += _ => needsReset = true;
             nativeAddon = addon;
@@ -46,7 +46,7 @@ public partial class FateWindow
             };
             component.AttachNode(this);
 
-            base.OnSetup(addon);
+            base.OnSetup(addon, values);
         }
 
         protected override unsafe void OnShow(AtkUnitBase* addon)

@@ -2,6 +2,7 @@
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using InteropGenerator.Runtime;
 using SalanthTweaks.Attributes;
 using SalanthTweaks.Enums;
 using SalanthTweaks.Interfaces;
@@ -113,7 +114,7 @@ public class AtkArrayEdit : ITweak
             {
                 if (parts[3] == "!!CLEAR")
                 {
-                    array->SetValue(arrayIndex, null);
+                    array->SetValue(arrayIndex, new CStringPointer(null));
                 }
                 else
                 {

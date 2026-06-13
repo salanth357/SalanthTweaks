@@ -25,7 +25,7 @@ public partial class FateWindow : ITweak
 
     public void OnInitialize() { }
 
-    public void OnEnable()
+    public unsafe void OnEnable()
     {
         Service.Get<IFramework>().Update += OnFrameworkUpdate;
 

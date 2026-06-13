@@ -27,7 +27,11 @@ public class ColorRegistrationStatus(ISeStringEvaluator stringEvaluator) : ITwea
 
     public unsafe void OnInitialize() { }
 
-    public unsafe void Dispose() { }
+    public unsafe void Dispose()
+    {
+        hookItemFormat?.Disable();
+        hookItemFormat?.Dispose();
+    }
 
     public unsafe void OnEnable()
     {
@@ -75,14 +79,15 @@ public class ColorRegistrationStatus(ISeStringEvaluator stringEvaluator) : ITwea
 
         void Replace(Utf8String* needle, Utf8String* replacement)
         {
-            var startIdx = newStr->IndexOf(needle);
+            var startIdx = (int)newStr->IndexOf(needle);
             if (startIdx == -1) return;
+            Service.Get<IPluginLog>().Debug("Replacing {0} at {1}", needle->ToString(), startIdx);
 
             var tmpStr = Utf8String.CreateEmpty();
             newStr->CopySubStrTo(tmpStr, 0, startIdx);
             tmpStr->Append(replacement);
             if (startIdx + needle->Length < newStr->Length)
-                tmpStr->ConcatCStr(newStr->Slice(startIdx + needle->Length));
+                tmpStr->ConcatCStr(newStr->Slice((int)startIdx + needle->Length));
             newStr->SetString(tmpStr->StringPtr);
         }
     }

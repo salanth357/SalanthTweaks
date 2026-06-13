@@ -68,7 +68,7 @@ public partial class ContextMenuItems : ITweak
         if (baseArgs.MenuType != ContextMenuType.Default) return;
         var argTarget = baseArgs.Target as MenuTargetDefault;
         if (argTarget?.TargetObject is not
-            { ObjectKind: ObjectKind.BattleNpc, SubKind: (byte)BattleNpcSubKind.Chocobo }) return;
+            { ObjectKind: ObjectKind.BattleNpc, SubKind: (byte)BattleNpcSubKind.Buddy }) return;
 
         baseArgs.AddMenuItem(new MenuItem
         {
@@ -84,7 +84,7 @@ public partial class ContextMenuItems : ITweak
     {
         var argTarget = baseArgs.Target as MenuTargetDefault;
         if (argTarget?.TargetObject is not
-            { ObjectKind: ObjectKind.BattleNpc, SubKind: (byte)BattleNpcSubKind.Chocobo }) return;
+            { ObjectKind: ObjectKind.BattleNpc, SubKind: (byte)BattleNpcSubKind.Buddy }) return;
 
         var character = (Character*)argTarget.TargetObject.Address;
         var excel = Service.Get<IDataManager>().Excel;
@@ -125,7 +125,7 @@ public partial class ContextMenuItems : ITweak
     {
         if (baseArgs.MenuType != ContextMenuType.Default) return;
         var argTarget = baseArgs.Target as MenuTargetDefault;
-        if (argTarget?.TargetObject is not { ObjectKind: ObjectKind.Player }) return;
+        if (argTarget?.TargetObject is not { ObjectKind: ObjectKind.Pc }) return;
 
         var gameObj = (Character*)argTarget.TargetObject.Address;
         if (gameObj->IsNotMounted()) return;

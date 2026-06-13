@@ -136,7 +136,7 @@ public class MainScenarioRoleQuests(ILogger<MainScenarioRoleQuests> Log) : ITwea
         [
             69159, 69160, 69161, 69162, 69163, 69164, 69662, 69663, 69664, 69665, 69666, 69667, 70378, 70379, 70380,
             70381, 70382, 70383
-        ]
+        ],
     };
 
     [AddonPreRefresh("ScenarioTree")]

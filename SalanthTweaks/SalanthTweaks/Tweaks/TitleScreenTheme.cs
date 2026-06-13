@@ -48,17 +48,17 @@ public class TitleScreenTheme : ITweak
         ctxInitHook.Original(thisPtr);
     }
 
-    public unsafe void OnInitialize()
+    public void OnInitialize()
     {
-        ctxInitHook = Service.Get<IGameInteropProvider>()
-                             .HookFromAddress<AddonContextMenu.Delegates.Initialize>(
-                                 AddonContextMenu.StaticVirtualTablePointer->Initialize, InitializeDetour);
     }
 
     public void Dispose() { }
 
-    public void OnEnable()
+    public unsafe void OnEnable()
     {
+        ctxInitHook = Service.Get<IGameInteropProvider>()
+                             .HookFromAddress<AddonContextMenu.Delegates.Initialize>(
+                                 AddonContextMenu.StaticVirtualTablePointer->Initialize, InitializeDetour);
         ctxInitHook.Enable();
     }
 

@@ -20,7 +20,7 @@ public partial class FateWindow
 
         public string Name
         {
-            get => LabelNode.String;
+            get => LabelNode.String.ExtractText();
             set => LabelNode.String = value;
         }
 
@@ -51,7 +51,7 @@ public partial class FateWindow
             set
             {
                 progressBarNode.Progress = value;
-                progressBarNode.TooltipString = $"{value * 100:F0}%";
+                progressBarNode.TextTooltip = $"{value * 100:F0}%";
             }
         }
 
@@ -122,7 +122,7 @@ public partial class FateWindow
             LabelNode.TextFlags = TextFlags.MultiLine | TextFlags.WordWrap | TextFlags.Ellipsis;
             LabelNode.Position = new Vector2(32, 4);
             LabelNode.Size = new Vector2(170, 32);
-            LabelNode.AddFlags(NodeFlags.Clip);
+            LabelNode.AddNodeFlags(NodeFlags.Clip);
 
             progressResNode = new ResNode
             {
@@ -139,7 +139,7 @@ public partial class FateWindow
                 FontType = FontType.MiedingerMed,
                 AlignmentType = AlignmentType.Left
             };
-            timerNode.AddFlags(NodeFlags.HasCollision);
+            timerNode.AddNodeFlags(NodeFlags.HasCollision);
             progressBarNode = new ProgressBarCastNode
             {
                 NodeId = MakeNodeId(5),

@@ -1,7 +1,6 @@
 ﻿using System.Numerics;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using KamiToolKit.Classes;
-using KamiToolKit.Classes.Timelines;
+using KamiToolKit.Timelines;
 using KamiToolKit.Nodes;
 
 namespace SalanthTweaks.Tweaks;

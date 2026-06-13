@@ -29,7 +29,10 @@ public class ItemComparisonMateriaStats : ITweak
 
     public void OnInitialize() { }
 
-    public void Dispose() { }
+    public void Dispose()
+    {
+        ReceiveEventHook?.Dispose();
+    }
 
     public void OnEnable() { }
 
