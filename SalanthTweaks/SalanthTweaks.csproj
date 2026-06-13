@@ -11,8 +11,6 @@
         <LoadSync>true</LoadSync>
         <PackageProjectUrl>https://github.com/salanth357/SalanthTweaks</PackageProjectUrl>
         <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
-        <Configurations>Release;Debug</Configurations>
-        <Platforms>x64</Platforms>
     </PropertyGroup>
 
     <ItemGroup>
@@ -23,27 +21,27 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\FFXIVClientStructs\InteropGenerator\InteropGenerator.csproj"/>
-        <ProjectReference Include="..\..\KamiToolKit\KamiToolKit.csproj"/>
-        <ProjectReference Include="..\..\SalanthTweaks.Generators\SalanthTweaks.Generators\SalanthTweaks.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
+        <ProjectReference Include="..\FFXIVClientStructs\InteropGenerator\InteropGenerator.csproj"/>
+        <ProjectReference Include="..\KamiToolKit\KamiToolKit.csproj"/>
+        <ProjectReference Include="..\SalanthTweaks.Generators\SalanthTweaks.Generators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
     </ItemGroup>
 
-    <ItemGroup Condition="!Exists('$(ProjectDir)..\..\FFXIVClientStructs')">
+    <ItemGroup Condition="!Exists('$(ProjectDir)..\FFXIVClientStructs')">
         <Reference Include="InteropGenerator.Runtime" Private="false"/>
         <Reference Include="FFXIVClientStructs" Private="false"/>
     </ItemGroup>
 
-    <PropertyGroup Condition="Exists('$(ProjectDir)..\..\FFXIVClientStructs')">
+    <PropertyGroup Condition="Exists('$(ProjectDir)..\FFXIVClientStructs')">
         <Use_Dalamud_FFXIVClientStructs>false</Use_Dalamud_FFXIVClientStructs>
         <InteropGenerator_InteropNamespace>SalanthTweaks</InteropGenerator_InteropNamespace>
         <DefineConstants>$(DefineConstants);HAS_LOCAL_CS</DefineConstants>
     </PropertyGroup>
 
-    <ItemGroup Condition="Exists('$(ProjectDir)..\..\FFXIVClientStructs')">
+    <ItemGroup Condition="Exists('$(ProjectDir)..\FFXIVClientStructs')">
         <CompilerVisibleProperty Include="InteropGenerator_InteropNamespace"/>
-        <ProjectReference Include="..\..\FFXIVClientStructs\InteropGenerator\InteropGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
-        <ProjectReference Include="..\..\FFXIVClientStructs\FFXIVClientStructs\FFXIVClientStructs.csproj" Private="True"/>
-        <ProjectReference Include="..\..\FFXIVClientStructs\InteropGenerator.Runtime\InteropGenerator.Runtime.csproj" Private="True"/>
+        <ProjectReference Include="..\FFXIVClientStructs\InteropGenerator\InteropGenerator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"/>
+        <ProjectReference Include="..\FFXIVClientStructs\FFXIVClientStructs\FFXIVClientStructs.csproj" Private="True"/>
+        <ProjectReference Include="..\FFXIVClientStructs\InteropGenerator.Runtime\InteropGenerator.Runtime.csproj" Private="True"/>
     </ItemGroup>
 
     <ItemGroup>

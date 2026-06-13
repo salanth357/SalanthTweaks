@@ -1,7 +1,4 @@
 ﻿<Solution>
-  <Configurations>
-    <Platform Name="x64" />
-  </Configurations>
   <Folder Name="/CI/">
     <File Path=".github\workflows\build.yml" />
   </Folder>
@@ -12,6 +9,6 @@
     <Project Path="FFXIVClientStructs\InteropGenerator\InteropGenerator.csproj" Type="Classic C#" />
   </Folder>
   <Project Path="KamiToolKit\KamiToolKit.csproj" Type="Classic C#" />
-  <Project Path="SalanthTweaks.Generators\SalanthTweaks.Generators\SalanthTweaks.Generators.csproj" Type="Classic C#" />
-  <Project Path="SalanthTweaks\SalanthTweaks\SalanthTweaks.csproj" Type="Classic C#" />
+  <Project Path="SalanthTweaks.Generators\SalanthTweaks.Generators.csproj" Type="Classic C#" />
+  <Project Path="SalanthTweaks\SalanthTweaks.csproj" Type="Classic C#" />
 </Solution>
