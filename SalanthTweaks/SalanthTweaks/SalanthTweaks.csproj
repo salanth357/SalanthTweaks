@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Dalamud.NET.Sdk/15.0.0">
     <PropertyGroup>
-        <Version>1.2.4</Version>
+        <Version>1.2.5</Version>
         <Description>Some kind of mistake, I'm sure</Description>
         <PackageProjectUrl>https://github.com/salanth357/SalanthTweaks</PackageProjectUrl>
         <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
