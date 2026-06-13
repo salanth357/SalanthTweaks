@@ -47,7 +47,7 @@ public class CosmicDatasetProgress(IDataManager dataManager) : ITweak
     }
 
     private const int JobCount = 11;
-    private const int TypeCount = 6;
+    private const int TypeCount = 7;
 
     private readonly Progress[,] ResearchProgress = new Progress[JobCount, TypeCount];
 
@@ -234,10 +234,10 @@ public class CosmicDatasetProgress(IDataManager dataManager) : ITweak
         var atkValues = new Span<AtkValue>(args.AtkValues.ToPointer(), (int)args.AtkValueCount);
         
         if (atkValues[0].Int != 1) return;
-        var itemCount = atkValues[32];
+        var itemCount = atkValues[33];
         const int itemSize = 6;
-        const int itemArrayBase = 33;
-        const int labelArrayBase = 801;
+        const int itemArrayBase = 34;
+        const int labelArrayBase = 802;
         var currentJobProgress = GetCurrentJobProgress();
 
         uint maxValue = 0;
