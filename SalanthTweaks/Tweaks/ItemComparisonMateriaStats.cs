@@ -24,7 +24,8 @@ namespace SalanthTweaks.Tweaks;
 [RegisterSingleton<ITweak>(Duplicate = DuplicateStrategy.Append)]
 public class ItemComparisonMateriaStats : ITweak
 {
-    public string DisplayName => "ItemComparisonMateriaStats";
+    public string DisplayName => "Reflect Materia in Item Comparison";
+    public string Description => "Make the Item Comparison UI reflect all melded materia";
     public TweakStatus Status { get; set; }
 
     public void OnInitialize() { }

@@ -14,7 +14,8 @@ namespace SalanthTweaks.Tweaks;
 [RegisterSingleton<ITweak>(Duplicate = DuplicateStrategy.Append)]
 public class StellarSprint : ITweak
 {
-    public string DisplayName => "StellarSprint";
+    public string DisplayName => "Stellar Sprint";
+    public string Description => "Prevent toggling off Stellar Sprint with the sprint button";
     public TweakStatus Status { get; set; }
 
     public void OnInitialize() { }

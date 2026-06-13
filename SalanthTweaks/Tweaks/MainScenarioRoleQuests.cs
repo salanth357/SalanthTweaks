@@ -47,6 +47,7 @@ public class MainScenarioRoleQuests(ILogger<MainScenarioRoleQuests> Log) : ITwea
     }
 
     public string DisplayName => "Main Scenario UI Show Role Quests";
+    public string Description => "Show role quests underneath the MSQ UI like class/job quests were";
     public TweakStatus Status { get; set; } = TweakStatus.Uninitialized;
 
     public void OnInitialize() { }

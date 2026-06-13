@@ -16,7 +16,8 @@ namespace SalanthTweaks.Tweaks;
 [RegisterSingleton<ITweak>(Duplicate = DuplicateStrategy.Append)]
 public class WKSResearchMenu : ITweak
 {
-    public string DisplayName => "WKSResearchMenu";
+    public string DisplayName => "Cosmic Exploration Tool Upgrade Hint";
+    public string Description => "Show an icon in Researchingway's dialog box when a tool is upgradable";
     public TweakStatus Status { get; set; }
 
     private unsafe delegate nint AddonCreateDelegate(RaptureAtkModule* thisPtr, CStringPointer addonName, uint valueCount, AtkValue* values);
@@ -44,7 +45,7 @@ public class WKSResearchMenu : ITweak
     private unsafe delegate bool IsNextAvailableDG(WKSResearchModule* thisPtr, byte jobIndex);
 
     [Signature("E8 ?? ?? ?? ?? 41 0F B6 57 ?? 84 C0")]
-    private unsafe IsNextAvailableDG? isNextAvailable = null;
+    private IsNextAvailableDG? isNextAvailable = null;
 
     private unsafe nint AddonCreateDetour(RaptureAtkModule* thisPtr, CStringPointer addonName, uint valueCount, AtkValue* valuesP)
     {
@@ -81,7 +82,6 @@ public class WKSResearchMenu : ITweak
         foreach (ref var v in  newValues)
             v.Dtor();
 
-        AtkUnitBase b;
         return (nint)ret;
         
         

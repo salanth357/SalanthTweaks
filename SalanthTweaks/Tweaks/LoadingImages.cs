@@ -29,6 +29,7 @@ public unsafe class LoadingImages(ILogger<LoadingImages> Log) : ITweak
     private const float Y = -220f;
 
     public string DisplayName => "Loading Images";
+    public string Description => "Show the login image for the zone when moving between zones";
     public TweakStatus Status { get; set; }
     public void OnInitialize() { }
 

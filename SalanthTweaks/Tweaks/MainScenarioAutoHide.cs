@@ -13,6 +13,7 @@ namespace SalanthTweaks.Tweaks;
 public class MainScenarioAutoHide : ITweak
 {
     public string DisplayName => "Main Scenario Auto Hide";
+    public string Description => "Auto-hide the MSQ UI when there are no quests to do.";
     public TweakStatus Status { get; set; }
     public void OnInitialize() { }
 

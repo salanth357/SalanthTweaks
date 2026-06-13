@@ -7,7 +7,7 @@ using SalanthTweaks.Attributes;
 using SalanthTweaks.Enums;
 using SalanthTweaks.Interfaces;
 using SalanthTweaks.Services;
-
+#if DEBUG
 namespace SalanthTweaks.Tweaks;
 
 [RegisterSingleton<ITweak>(Duplicate = DuplicateStrategy.Append)]
@@ -126,3 +126,4 @@ public class AtkArrayEdit : ITweak
         chatGui?.Print(message, "AtkEdit");
     }
 }
+#endif

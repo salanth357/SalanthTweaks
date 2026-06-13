@@ -28,14 +28,14 @@ using SalanthTweaks.Enums;
 using SalanthTweaks.Interfaces;
 using SalanthTweaks.Services;
 using ClassJob = Lumina.Excel.Sheets.ClassJob;
-// using WKSMissionReward = SalanthTweaks.CustomSheets.WKSMissionReward;
 
 namespace SalanthTweaks.Tweaks;
 
 [RegisterSingleton<ITweak>(Duplicate = DuplicateStrategy.Append)]
-public class CosmicDatasetProgress(IDataManager dataManager) : ITweak
+public class CosmicMissionPriority(IDataManager dataManager) : ITweak
 {
-    public string DisplayName => "CosmicDatasetProgress";
+    public string DisplayName => "Cosmic Mission Priority";
+    public string Description => "Highlights Cosmic Exploration missions based on their research value";
     public TweakStatus Status { get; set; }
 
     public void OnInitialize() { }

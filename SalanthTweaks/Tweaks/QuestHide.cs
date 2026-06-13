@@ -10,6 +10,7 @@ using SalanthTweaks.Interfaces;
 
 namespace SalanthTweaks.Tweaks;
 
+#if DEBUG
 [RegisterSingleton<ITweak>(Duplicate = DuplicateStrategy.Append)]
 public class QuestHide : ITweak
 {
@@ -61,4 +62,4 @@ public class QuestHide : ITweak
             }
     }
 } 
-
+#endif

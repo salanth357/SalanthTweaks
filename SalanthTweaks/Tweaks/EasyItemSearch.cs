@@ -11,6 +11,7 @@ namespace SalanthTweaks.Tweaks;
 public class EasyItemSearch : ITweak
 {
     public string DisplayName => "EasyItemSearch";
+    public string Description => "Don't require quotes around multi-word item searches\n \\isearch Savage Aim Materia";
     public TweakStatus Status { get; set; }
 
     public void OnInitialize() { }
