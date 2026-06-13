@@ -84,6 +84,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           path: ${{ env.build_path }}/*
+          archive: true
 
   release:
     name: Release
