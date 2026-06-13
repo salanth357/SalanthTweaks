@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Dalamud.NET.Sdk/15.0.0">
     <PropertyGroup>
+        <Name>SalanthTweaks</Name>
         <Version>1.2.5.1</Version>
+        <Author>salanth357</Author>
+        <RepoUrl>https://github.com/salanth357/SalanthTweaks</RepoUrl>
+        <Punchline>A collection of QoL tweaks</Punchline>
         <Description>Some kind of mistake, I'm sure</Description>
+        <LoadRequiredState>2</LoadRequiredState>
+        <LoadSync>true</LoadSync>
         <PackageProjectUrl>https://github.com/salanth357/SalanthTweaks</PackageProjectUrl>
         <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
-        <IsPackable>false</IsPackable>
         <Configurations>Release;Debug</Configurations>
         <Platforms>x64</Platforms>
     </PropertyGroup>
-
-    <ItemGroup>
-        <Content Include="SalanthTweaks.json"/>
-    </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Injectio" Version="4.1.0"/>
